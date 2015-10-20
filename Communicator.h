@@ -11,14 +11,15 @@
 
 #include <stdio.h>
 #include <string>
-using std::string;
+//--------------
+#include "Board.h"
 
 namespace BCAI {
     
     class Communicator {
         
     public:
-        string GetDecision( string input_info_v );
+        std::string GetDecision( std::string input_info_v );
         
     };
     

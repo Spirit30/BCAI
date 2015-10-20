@@ -14,7 +14,7 @@ using std::cout;
 int main(int argc, const char * argv[]) {
     
     BCAI::Communicator communicator;
-    string output = communicator.GetDecision("SOME");
+    string output = communicator.GetDecision("KA1");
     cout << output;
     
     return 0;

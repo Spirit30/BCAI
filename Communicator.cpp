@@ -8,11 +8,20 @@
 
 #include "Communicator.h"
 
+
+
+
+
 namespace BCAI {
     
-    string Communicator::GetDecision( string input_info_v ) {
+    std::string Communicator::GetDecision( std::string input_info_v ) {
         
-        return input_info_v + "_HERE";
+        Board board( input_info_v );
         
+        Piece * result = board.GetMove();
+        
+        std::string mystring;
+        
+        return input_info_v + "_: " + * (result->GetX());
     }
 }
