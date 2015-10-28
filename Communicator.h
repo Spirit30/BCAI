@@ -9,8 +9,6 @@
 #ifndef __BCAI__Communicator__
 #define __BCAI__Communicator__
 
-#include <stdio.h>
-#include <string>
 //--------------
 #include "Board.h"
 
@@ -19,7 +17,7 @@ namespace BCAI {
     class Communicator {
         
     public:
-        std::string GetDecision( std::string input_info_v );
+        char * GetDecision( const char input_game_c[] );
         
     };
     

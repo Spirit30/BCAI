@@ -9,8 +9,6 @@
 #ifndef __BCAI__Board__
 #define __BCAI__Board__
 
-#include <stdio.h>
-#include <string>
 #include <vector>
 //----------------
 #include "Piece.h"
@@ -31,7 +29,7 @@ namespace BCAI {
     public:
         std::vector<Piece*> pieces;
         //------------------------
-        Board( std::string & input_info_v);
+        Board( char * input_info_p);
         Piece * GetMove();
     };
 

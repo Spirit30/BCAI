@@ -11,10 +11,10 @@
 
 namespace BCAI {
     
-    Board::Board( std::string & input_info_r)
+    Board::Board( char * input_info_p)
     {
         //Parse data pieces list
-        for( int i = 0; i < input_info_r.length(); i++ )
+        /*for( int i = 0; i < input_info_r.length(); i++ )
         {
             switch ( input_info_r[ i ] )
             {
@@ -29,7 +29,7 @@ namespace BCAI {
                     break;
                 }
             }
-        }
+        }*/
     }
     
     Piece * Board::GetMove()

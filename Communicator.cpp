@@ -14,14 +14,15 @@
 
 namespace BCAI {
     
-    std::string Communicator::GetDecision( std::string input_info_v ) {
+    char * Communicator::GetDecision( const char input_game_c[] ) {
         
-        Board board( input_info_v );
+        char  * move = new char[4] { 'W', 'Q', 'H', '4' };
         
-        Piece * result = board.GetMove();
+        //Get Move
+        //Board board( input_info_p );
+        //Piece * result = board.GetMove();
+        //....
         
-        std::string mystring;
-        
-        return input_info_v + "_: " + * (result->GetX());
+        return move;
     }
 }
