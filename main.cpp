@@ -5,9 +5,12 @@
 //  Created by Max Botviniev on 15.10.15.
 //  Copyright (c) 2015 Max Botviniev. All rights reserved.
 //
+#define WIN_BCAI
+//#define MAC_BCAI
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "Communicator.h"
 
 //FRONTEND Classes
@@ -62,6 +65,18 @@ const char * Tile::GetLine( unsigned int index ) const {
         default: return NULL;
     }
 }
+
+//-----------------------
+
+class GameState
+{
+private:
+	//char init_game_c[] = "+RA1+SB1+WOC1+WQD1+WKE1+WOF1+WSG1+WRH1+WPA2+WPB2+WPC2+WPD2+WPE2+WPF2+WPG2+WPH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
+
+
+
+
+};
 
 //FRONTEND
 //-----------------------
@@ -183,6 +198,10 @@ int main(int argc, const char * argv[]) {
     std::cout << output;
     delete[] output;
     
+#ifdef WIN_BCAI
+	system("Pause");
+#endif
+
     return 0;
 }
 
