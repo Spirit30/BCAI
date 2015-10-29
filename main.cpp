@@ -15,119 +15,153 @@
 
 class Tile {
 public:
+    //Data
+    //-------------
     const static unsigned int TILES_PER_AXE = 8;
     const static unsigned int TILES = 64;
-    const static unsigned int LINES = 3;
+    const static unsigned int ROWS = 3;
     const static unsigned int CHARS_PER_ROW = 6;
     //-------------
-    Tile( bool color_v, char info_v[] );
-    char * GetLine( unsigned int index );
-    //~Tile();
+    Tile( const bool & white_r, const char * piece_info_r, const char & x_r, const unsigned int & y_r );
+    const char * GetLine( unsigned int index ) const;
 private:
-    char * lines_v[LINES];
+    bool white_v;
+    //char x_v = '?';
+    //unsigned int y_v = 0;
+    char tile_info_v[6];
+    char piece_info_v[6];
 };
 
-    Tile::Tile( bool white_v, char info_v[] ) {
+    Tile::Tile( const bool & white_r, const char * piece_info_r, const char & x_r, const unsigned int & y_r ) {
         
-    char info_line_l[6];
-        info_line_l[0] = info_line_l[5] = '|';  //white_v ? '|' : '|';
-        info_line_l[1] = info_v[0];
-        info_line_l[2] = info_v[1];
-        info_line_l[3] = info_v[2];
-        info_line_l[4] = info_v[3];
+        white_v = white_r;
+        //x_v = x_r;
+        //y_v = y_r;
         
-    lines_v[0] = new char[6];
-    lines_v[1] = new char[6];
-    lines_v[2] = new char[6];
         
-    strcpy( lines_v[0], white_v ? "|    |" : "|####|" );
-    strcpy( lines_v[1], info_line_l );
-    strcpy( lines_v[2], white_v ? "|____|" : "|####|" );
+        /*piece_info_v[1] = piece_info_r[0];
+        piece_info_v[2] = piece_info_r[1];
+        piece_info_v[3] = piece_info_r[2];
+        piece_info_v[4] = piece_info_r[3];*/
+        
+        tile_info_v[1] = x_r;
+        tile_info_v[2] = std::to_string(y_r)[0];
+        tile_info_v[3] = tile_info_v[4] = white_r ? ' ' : '#';
+        
+        tile_info_v[0] = tile_info_v[5] = piece_info_v[0] = piece_info_v[5] = '|';
 }
 
 
-char * Tile::GetLine( unsigned int index ) {
-    return lines_v[ index ];
-}
-
-/*Tile::~Tile() {
-    for( int i = 0; i < LINES; i++)
+const char * Tile::GetLine( unsigned int index ) const {
+    
+    switch( index )
     {
-        delete lines_v[i];
+        case 0: return tile_info_v;                     //TOP
+        case 1: return white_v ? "|    |" : "|####|";   //MIDDLE / INFO
+        case 2: return white_v ? "|____|" : "|####|";   //BOTTOM
+        default: return NULL;
     }
-}*/
+}
 
 //FRONTEND
 //-----------------------
 
-std::vector<Tile> ParseDecision( char * decision_p )
+std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, char * decision_p )
 {
-    std::vector<Tile> result;
+    
+    
+    
+    
     bool white_l = true;
-    for(int i = 0; i < Tile::TILES; i++)
+    char x_v = 'i';
+    unsigned int y_v = 9;
+    
+    for(int tile_index_l = 0; tile_index_l < Tile::TILES; tile_index_l++)
     {
-        Tile tile( white_l, decision_p );
-        //std::cout << white_l << std::endl;
-        white_l = !white_l;
+       
         
-        result.push_back( tile );
+
+        //----------
+        //If new line begins
+        if( tile_index_l % Tile::TILES_PER_AXE == 0) {
+            
+            x_v -= Tile::TILES_PER_AXE;
+            y_v--;
+        }
+        //Change color if not a new line
+        else {
+            
+            white_l = !white_l;
+        }
+        Tile tile( white_l, NULL, x_v, y_v );
+        x_v++;
+        //----------
+        parsed_decision_r.push_back( tile );
     }
-    return result;
+    return parsed_decision_r;
 }
 
 //-----------
 
 inline unsigned int ClampTilesRowOrder( unsigned int index )
 {
-    return index < ( Tile::LINES -1 ) ? ( index +1 ) : 0;
+    return index < ( Tile::ROWS -1 ) ? ( index +1 ) : 0;
 }
 
 //-----------
 
-char * GetOutput( std::vector<Tile> parsed_decision_p ) {
+char * GetOutput( const std::vector<Tile> & parsed_decision_r ) {
 
     //Data
     //-----------
     const unsigned int CHARS_PER_LINE = Tile::CHARS_PER_ROW * Tile::TILES_PER_AXE; // 6 horisontal chars for Tile * 8 horizontal Tiles per Board
-    const unsigned int LINES_PER_BOARD = Tile::LINES * Tile::TILES_PER_AXE; // 3 rows per Tile * 8 vertical Tiles per Board
+    const unsigned int LINES_PER_BOARD = Tile::ROWS * Tile::TILES_PER_AXE; // 3 rows per Tile * 8 vertical Tiles per Board
     
-    const unsigned int OUTPUT_LEGHT =  CHARS_PER_LINE * LINES_PER_BOARD +
-                                    //rows_per_board_l + // '\n' for each row
-                                    1; // for '\0' terminator
+    const unsigned int OUTPUT_LENGHT =  CHARS_PER_LINE * LINES_PER_BOARD +
+                                        LINES_PER_BOARD + // '\n' for each row
+                                        1; // for '\0' terminator
     
     //Fill
     //-----------
-    char * resullt_p = new char[ OUTPUT_LEGHT ];
+    char * resullt_p = new char[ OUTPUT_LENGHT ];
     
+    unsigned int line_index_l = 0;
     unsigned int tiles_row_index_l = -1;
-    //unsigned int tile_index = 0;
+    unsigned int tile_index_l = 8;
     
-    
-    for( int y = 0; y < OUTPUT_LEGHT -1; y++ ) {
+    unsigned int symbol_index_l = 0;
+    while( symbol_index_l < OUTPUT_LENGHT -1 ) {
         
-        unsigned int char_order_in_line_v = y % CHARS_PER_LINE;
-        //If board line ends
-        if( char_order_in_line_v == 0 ) {
+        //If line begins
+        if( symbol_index_l % CHARS_PER_LINE == 0 ) {
+            
             //Start new line
-            resullt_p[ y ] = '\n';
+            resullt_p[ symbol_index_l ] = '\n';
+            
             //Increment line content index
             tiles_row_index_l = ClampTilesRowOrder( tiles_row_index_l );
-            //tile_index -= Tile::TILES_PER_AXE;
+            
+            //Return index of Tiles
+            tile_index_l = line_index_l / Tile::ROWS * Tile::TILES_PER_AXE;
+            line_index_l++;
+            //std::cout << "_Vertical_return_" << tile_index_l << std::endl;
         }
         else {
-            //Increment symbol of tile's row
-            unsigned int tile_row_char_index_l = y % Tile::CHARS_PER_ROW;
             
-            //!!!
-            //Update index of current Tile
-            //tile_index = char_order_in_line_v % Tile::TILES_PER_AXE;
-            //std::cout << tile_index << std::endl;
+            //Increment symbol of tile's row
+            unsigned int tile_row_char_index_l = symbol_index_l % Tile::CHARS_PER_ROW;
+
+            //Update index offset of current Tile
+            if( tile_row_char_index_l == 0 ) tile_index_l++;
+            //std::cout << "_Horizontal_offset_" << tile_index_l  << std::endl;
             
             //Insert current symbol to output text
-            resullt_p[ y ] = parsed_decision_p[   0   ].GetLine( tiles_row_index_l )[ tile_row_char_index_l ];
+            resullt_p[ symbol_index_l ] = parsed_decision_r[ tile_index_l ].GetLine( tiles_row_index_l )[ tile_row_char_index_l ];
+            
         }
+        symbol_index_l++;
     }
-    resullt_p[ OUTPUT_LEGHT -1 ] = '\0';
+    resullt_p[ OUTPUT_LENGHT -1 ] = '\0';
     
     return resullt_p;
 }
@@ -136,9 +170,16 @@ char * GetOutput( std::vector<Tile> parsed_decision_p ) {
 
 int main(int argc, const char * argv[]) {
     
+    //Get AI MOVE
     BCAI::Communicator communicator;
+    char * move = communicator.GetDecision(argv[0]);
 
-    char * output = GetOutput( ParseDecision( communicator.GetDecision(argv[0]) ) );
+    //Parse MOVE string to this Frontend data structure ( list of Tiles )
+    std::vector<Tile> parsed_decision_v;
+    parsed_decision_v = ParseDecision( parsed_decision_v, move );
+    
+    //Serialize list of Tiles to output string
+    char * output = GetOutput( parsed_decision_v );
     std::cout << output;
     delete[] output;
     
