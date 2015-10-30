@@ -5,7 +5,7 @@
 //  Created by Max Botviniev on 15.10.15.
 //  Copyright (c) 2015 Max Botviniev. All rights reserved.
 //
-#define WIN_BCAI
+//#define WIN_BCAI
 //#define MAC_BCAI
 
 #include <iostream>
@@ -33,6 +33,7 @@ private:
     //unsigned int y_v = 0;
     char tile_info_v[6];
     char piece_info_v[6];
+    char FillInternalSpace();
 };
 
     Tile::Tile( const bool & white_r, const char * piece_info_r, const char & x_r, const unsigned int & y_r ) {
@@ -41,17 +42,19 @@ private:
         //x_v = x_r;
         //y_v = y_r;
         
-        
-        /*piece_info_v[1] = piece_info_r[0];
-        piece_info_v[2] = piece_info_r[1];
-        piece_info_v[3] = piece_info_r[2];
-        piece_info_v[4] = piece_info_r[3];*/
+        piece_info_v[2] = piece_info_r[0] ? piece_info_r[0] : FillInternalSpace();
+        piece_info_v[3] = piece_info_r[0] ? piece_info_r[1] : FillInternalSpace();
         
         tile_info_v[1] = x_r;
         tile_info_v[2] = std::to_string(y_r)[0];
-        tile_info_v[3] = tile_info_v[4] = white_r ? ' ' : '#';
+        tile_info_v[3] = tile_info_v[4] = piece_info_v[1] = piece_info_v[4] = FillInternalSpace();
         
         tile_info_v[0] = tile_info_v[5] = piece_info_v[0] = piece_info_v[5] = '|';
+}
+
+inline char Tile::FillInternalSpace()
+{
+    return white_v ? ' ' : '#';
 }
 
 
@@ -60,7 +63,7 @@ const char * Tile::GetLine( unsigned int index ) const {
     switch( index )
     {
         case 0: return tile_info_v;                     //TOP
-        case 1: return white_v ? "|    |" : "|####|";   //MIDDLE / INFO
+        case 1: return piece_info_v;                    //MIDDLE / INFO
         case 2: return white_v ? "|____|" : "|####|";   //BOTTOM
         default: return NULL;
     }
@@ -71,30 +74,30 @@ const char * Tile::GetLine( unsigned int index ) const {
 class GameState
 {
 private:
-	//char init_game_c[] = "+RA1+SB1+WOC1+WQD1+WKE1+WOF1+WSG1+WRH1+WPA2+WPB2+WPC2+WPD2+WPE2+WPF2+WPG2+WPH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
-
-
-
-
+    const char * init_game_p = "+RA1+SB1+OC1+QD1+KE1+OF1+SG1+RH1+PA2+PB2+PC2+PD2+PE2+PF2+PG2+PH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
+public:
+    const char * Get();
 };
+
+const char * GameState::Get() {
+    
+    return init_game_p;
+}
 
 //FRONTEND
 //-----------------------
 
-std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, char * decision_p )
+std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const char * decision_p, const char * game )
 {
-    
-    
-    
-    
+
+    //Loop variables for Tiles
     bool white_l = true;
-    char x_v = 'i';
+    char x_v = 'I';
     unsigned int y_v = 9;
+    char piece_l[2];
     
     for(int tile_index_l = 0; tile_index_l < Tile::TILES; tile_index_l++)
     {
-       
-        
 
         //----------
         //If new line begins
@@ -108,7 +111,25 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, char * d
             
             white_l = !white_l;
         }
-        Tile tile( white_l, NULL, x_v, y_v );
+        //Parse piece data
+        piece_l[0] = NULL;
+        for( int piece_index_l = 0; piece_index_l < strlen(game); piece_index_l += 4) {
+            
+            //std::cout << x_v << "_vs_" << game[ piece_index_l + 2 ] << std::endl;
+            //std::cout << y_v << "_vs_" << (game[ piece_index_l + 3 ] - '0') << std::endl;
+            
+            //If Piece position equals to current Tile in loop
+            if( x_v == game[ piece_index_l + 2 ] &&
+                y_v == game[ piece_index_l + 3 ] - '0') {
+                
+                piece_l[0] = game[ piece_index_l ];
+                piece_l[1] = game[ piece_index_l + 1 ];
+                
+                //std::cout << piece_l << std::endl;
+            }
+        }
+        
+        Tile tile( white_l, piece_l, x_v, y_v );
         x_v++;
         //----------
         parsed_decision_r.push_back( tile );
@@ -185,13 +206,16 @@ char * GetOutput( const std::vector<Tile> & parsed_decision_r ) {
 
 int main(int argc, const char * argv[]) {
     
+    //Frontend memory stored in argv[0] if call from other app
+    GameState game_state;
+    
     //Get AI MOVE
     BCAI::Communicator communicator;
-    char * move = communicator.GetDecision(argv[0]);
+    char * move = communicator.GetDecision( game_state.Get() );
 
     //Parse MOVE string to this Frontend data structure ( list of Tiles )
     std::vector<Tile> parsed_decision_v;
-    parsed_decision_v = ParseDecision( parsed_decision_v, move );
+    parsed_decision_v = ParseDecision( parsed_decision_v, move, game_state.Get() );
     
     //Serialize list of Tiles to output string
     char * output = GetOutput( parsed_decision_v );
