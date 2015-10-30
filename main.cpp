@@ -89,6 +89,7 @@ const char * GameState::Get() {
 
 std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const char * decision_p, const char * game )
 {
+    bool decision_aplied_l = false;
 
     //Loop variables for Tiles
     bool white_l = true;
@@ -115,10 +116,21 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
         piece_l[0] = NULL;
         for( int piece_index_l = 0; piece_index_l < strlen(game); piece_index_l += 4) {
             
+            if( ! decision_aplied_l ) {
+                
+                if( game[ piece_index_l + 2 ] == decision_p[ 0 ] &&
+                    game[ piece_index_l + 3 ] == decision_p[ 1 ] ) {
+                    
+                    //APPLY DECISION !!!
+                    //game[ piece_index_l + 2 ] = decision_p[ 2 ];
+                }
+            }
+            
+            //Compare pieces position to current Tile
             //std::cout << x_v << "_vs_" << game[ piece_index_l + 2 ] << std::endl;
             //std::cout << y_v << "_vs_" << (game[ piece_index_l + 3 ] - '0') << std::endl;
             
-            //If Piece position equals to current Tile in loop
+            //If Piece position equals to current Tile
             if( x_v == game[ piece_index_l + 2 ] &&
                 y_v == game[ piece_index_l + 3 ] - '0') {
                 
@@ -146,7 +158,7 @@ inline unsigned int ClampTilesRowOrder( unsigned int index )
 
 //-----------
 
-char * GetOutput( const std::vector<Tile> & parsed_decision_r ) {
+char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
 
     //Data
     //-----------
@@ -218,7 +230,7 @@ int main(int argc, const char * argv[]) {
     parsed_decision_v = ParseDecision( parsed_decision_v, move, game_state.Get() );
     
     //Serialize list of Tiles to output string
-    char * output = GetOutput( parsed_decision_v );
+    char * output = SerializeToOutput( parsed_decision_v );
     std::cout << output;
     delete[] output;
     
