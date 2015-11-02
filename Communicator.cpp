@@ -16,7 +16,7 @@ namespace BCAI {
     
     char * Communicator::GetDecision( const char input_game_c[] ) {
         
-        char  * move = new char[4] { 'W', 'Q', 'H', '4' };
+        char  * move = new char[4] { 'E', '2', 'E', '4' };
         
         //Get Move
         //Board board( input_info_p );

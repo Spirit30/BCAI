@@ -77,6 +77,7 @@ private:
     const char * init_game_p = "+RA1+SB1+OC1+QD1+KE1+OF1+SG1+RH1+PA2+PB2+PC2+PD2+PE2+PF2+PG2+PH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
 public:
     const char * Get();
+    size_t Length();
 };
 
 const char * GameState::Get() {
@@ -84,12 +85,20 @@ const char * GameState::Get() {
     return init_game_p;
 }
 
+size_t GameState::Length() {
+    
+    return std::strlen(init_game_p);
+}
+
 //FRONTEND
 //-----------------------
 
-std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const char * decision_p, const char * game )
+std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const char * decision_p, char * game_p )
 {
+
     bool decision_aplied_l = false;
+    
+    //bool decision_aplied_l = false;
 
     //Loop variables for Tiles
     bool white_l = true;
@@ -114,15 +123,22 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
         }
         //Parse piece data
         piece_l[0] = NULL;
-        for( int piece_index_l = 0; piece_index_l < strlen(game); piece_index_l += 4) {
+        for( int piece_index_l = 0; piece_index_l < strlen(game_p); piece_index_l += 4) {
+            
             
             if( ! decision_aplied_l ) {
-                
-                if( game[ piece_index_l + 2 ] == decision_p[ 0 ] &&
-                    game[ piece_index_l + 3 ] == decision_p[ 1 ] ) {
+            
+                if( game_p[ piece_index_l + 2 ] == decision_p[ 0 ] &&
+                    game_p[ piece_index_l + 3 ] == decision_p[ 1 ] ) {
                     
-                    //APPLY DECISION !!!
-                    //game[ piece_index_l + 2 ] = decision_p[ 2 ];
+                    
+                    
+                   game_p[ piece_index_l + 2 ] = decision_p[ 2 ];
+                   game_p[ piece_index_l + 3 ] = decision_p[ 3 ];
+                    
+                    std::cout << "Move: " << decision_p << std::endl;
+                    
+                    decision_aplied_l = true;
                 }
             }
             
@@ -131,11 +147,11 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
             //std::cout << y_v << "_vs_" << (game[ piece_index_l + 3 ] - '0') << std::endl;
             
             //If Piece position equals to current Tile
-            if( x_v == game[ piece_index_l + 2 ] &&
-                y_v == game[ piece_index_l + 3 ] - '0') {
+            if( x_v == game_p[ piece_index_l + 2 ] &&
+                y_v == game_p[ piece_index_l + 3 ] - '0') {
                 
-                piece_l[0] = game[ piece_index_l ];
-                piece_l[1] = game[ piece_index_l + 1 ];
+                piece_l[0] = game_p[ piece_index_l ];
+                piece_l[1] = game_p[ piece_index_l + 1 ];
                 
                 //std::cout << piece_l << std::endl;
             }
@@ -223,11 +239,14 @@ int main(int argc, const char * argv[]) {
     
     //Get AI MOVE
     BCAI::Communicator communicator;
-    char * move = communicator.GetDecision( game_state.Get() );
+    char * move_p = communicator.GetDecision( game_state.Get() );
 
     //Parse MOVE string to this Frontend data structure ( list of Tiles )
     std::vector<Tile> parsed_decision_v;
-    parsed_decision_v = ParseDecision( parsed_decision_v, move, game_state.Get() );
+    char * game_p = new char[game_state.Length()];
+    std::strcpy(game_p, game_state.Get());
+    parsed_decision_v = ParseDecision( parsed_decision_v, move_p, game_p );
+    delete game_p;
     
     //Serialize list of Tiles to output string
     char * output = SerializeToOutput( parsed_decision_v );
