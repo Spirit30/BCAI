@@ -11,6 +11,8 @@
 
 //--------------
 #include "Board.h"
+//TEMP
+#include "functions.h"
 
 namespace BCAI {
     

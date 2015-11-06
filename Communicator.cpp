@@ -10,19 +10,19 @@
 
 
 
-
-
 namespace BCAI {
     
     char * Communicator::GetDecision( const char input_game_c[] ) {
         
-        char  * move = new char[4] { 'E', '2', 'E', '4' };
+        char  * AI_move = new char[4] /*{ 'A', '7', 'A', '6' }*/ ;
         
         //Get Move
         //Board board( input_info_p );
         //Piece * result = board.GetMove();
         //....
         
-        return move;
+        InputFill(AI_move);
+        
+        return AI_move;
     }
 }

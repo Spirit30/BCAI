@@ -9,8 +9,9 @@
 //#define MAC_BCAI
 
 #include <iostream>
+#include <cstdio>
 #include <vector>
-#include <string>
+//#include <string>
 #include "Communicator.h"
 
 //FRONTEND Classes
@@ -74,20 +75,33 @@ const char * Tile::GetLine( unsigned int index ) const {
 class GameState
 {
 private:
-    const char * init_game_p = "+RA1+SB1+OC1+QD1+KE1+OF1+SG1+RH1+PA2+PB2+PC2+PD2+PE2+PF2+PG2+PH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
+    char * game_p;
 public:
-    const char * Get();
+    GameState();
+    char * Get();
     size_t Length();
 };
 
-const char * GameState::Get() {
+GameState::GameState() {
     
-    return init_game_p;
+    char init_game_l[] = "+RA1+SB1+OC1+QD1+KE1+OF1+SG1+RH1+PA2+PB2+PC2+PD2+PE2+PF2+PG2+PH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
+    game_p = new char[128];
+    for(int i = 0; i < std::strlen(init_game_l); i++) {
+        
+        game_p[i] = init_game_l[i];
+    }
+}
+
+
+
+char * GameState::Get() {
+    
+    return game_p;
 }
 
 size_t GameState::Length() {
     
-    return std::strlen(init_game_p);
+    return std::strlen(game_p);
 }
 
 //FRONTEND
@@ -136,8 +150,7 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
                    game_p[ piece_index_l + 2 ] = decision_p[ 2 ];
                    game_p[ piece_index_l + 3 ] = decision_p[ 3 ];
                     
-                    std::cout << "Move: " << decision_p << std::endl;
-                    
+                    //std::cout << "Move: " << decision_p << std::endl;
                     decision_aplied_l = true;
                 }
             }
@@ -162,6 +175,7 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
         //----------
         parsed_decision_r.push_back( tile );
     }
+    
     return parsed_decision_r;
 }
 
@@ -232,26 +246,66 @@ char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
 
 //-----------------------
 
-int main(int argc, const char * argv[]) {
+void InputFill( char * input_storage_p ) {
     
-    //Frontend memory stored in argv[0] if call from other app
-    GameState game_state;
+    const unsigned int input_length_l = 4;
+    unsigned int char_index_l = 0;
     
-    //Get AI MOVE
-    BCAI::Communicator communicator;
-    char * move_p = communicator.GetDecision( game_state.Get() );
+    while (std::cin && char_index_l < input_length_l)
+    {
+        std::cin.get (input_storage_p[char_index_l]) ;
+        char_index_l++;
+    }
+    std::cin.get();
+}
 
+//-----------------------
+
+void Print( GameState & game_state_r, const char * move_p ) {
     //Parse MOVE string to this Frontend data structure ( list of Tiles )
     std::vector<Tile> parsed_decision_v;
-    char * game_p = new char[game_state.Length()];
-    std::strcpy(game_p, game_state.Get());
-    parsed_decision_v = ParseDecision( parsed_decision_v, move_p, game_p );
-    delete game_p;
+ 
+    parsed_decision_v = ParseDecision( parsed_decision_v, move_p, game_state_r.Get() );
     
     //Serialize list of Tiles to output string
     char * output = SerializeToOutput( parsed_decision_v );
     std::cout << output;
     delete[] output;
+}
+
+//-----------------------
+
+int main(int argc, const char * argv[]) {
+    
+    //Frontend memory stored in argv[0] if call from other app
+    GameState game_state_v;
+    
+    //Get AI MOVE
+    BCAI::Communicator communicator;
+    
+    //MAIN LOOP
+    int turn_l = 1;
+    while ( turn_l < INT_MAX ) {
+        
+        char * move_p = new char[4];
+        
+        if( turn_l % 2 ) {
+            
+            std::cout << "USER 1 MOVE # " << turn_l << std::endl;
+            InputFill(move_p);
+        }
+        else {
+            
+            std::cout << "USER 2 MOVE # " << turn_l << std::endl;
+            move_p = communicator.GetDecision(game_state_v.Get());
+        }
+        
+        Print( game_state_v, move_p );
+        delete[] move_p;
+        
+        //Print( game_state_v, communicator.GetDecision(game_state_v.Get()) );
+        turn_l++;
+    }
     
 #ifdef WIN_BCAI
 	system("Pause");
