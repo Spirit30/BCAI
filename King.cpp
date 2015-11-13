@@ -7,3 +7,21 @@
 //
 
 #include "King.h"
+namespace BCAI {
+    
+    /*std::vector<Position> King::Avaliable() {
+        
+        avaliable_positions_v.clear();
+        
+        //Custom block
+        //-------------------
+        
+        
+        
+        
+        //-------------------
+        
+        return avaliable_positions_v;
+    }*/
+    
+}

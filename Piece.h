@@ -10,21 +10,27 @@
 #define __BCAI__Piece__
 
 #include <stdio.h>
+#include <vector>
+//-------------------
+#include "Position.hpp"
 
 namespace BCAI {
     
     class Piece {
         
     private:
-        char x_v = 'X';
-        char y_v = 'Y';
+        //Data
+        bool white_v;
+        Position position_v;
         unsigned int score_v = 666;
-        
+    protected:
+        //variables
+        std::vector<Position> avaliable_positions_v;
     public:
-        Piece( char _x_v, char _y_v, unsigned int _score_v );
+        Piece( Position _position_v, unsigned int _score_v, bool _white_v ) : position_v(_position_v), score_v(_score_v), white_v(_white_v) {  };
+        virtual std::vector<Position> Avaliable();
         unsigned int * GetScore();
-        char * GetX();
-        char * GetY();
+
     };
     
 }

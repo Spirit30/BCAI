@@ -37,6 +37,7 @@ private:
     char FillInternalSpace();
 };
 
+    //Frontent version
     Tile::Tile( const bool & white_r, const char * piece_info_r, const char & x_r, const unsigned int & y_r ) {
         
         white_v = white_r;

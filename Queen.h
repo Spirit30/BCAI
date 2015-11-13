@@ -15,7 +15,7 @@ namespace BCAI {
     class Queen : public Piece
     {
     public:
-        Queen( char _x_v, char _y_v, unsigned int _score_v = 9 ) : Piece( _x_v, _y_v, _score_v ) {};
+        Queen( Position _position_v, unsigned int _score_v, bool _white_v )  : Piece(_position_v, _score_v, _white_v) {};
     };
 }
 #endif /* defined(__BCAI__Queen__) */

@@ -19,7 +19,7 @@ namespace BCAI {
     class Communicator {
         
     public:
-        char * GetDecision( const char input_game_c[] );
+        char * GetDecision( const char * input_game_p );
         
     };
     

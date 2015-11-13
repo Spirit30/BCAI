@@ -11,6 +11,8 @@
 
 #include <vector>
 //----------------
+#include "Tile.hpp"
+//----------------
 #include "Piece.h"
 //----------------
 #include "King.h"
@@ -24,13 +26,13 @@ namespace BCAI {
 
     class Board
     {
-    //private:
-        
+    private:
+        Tile * tiles_table_v[8][8];
+        std::vector<Piece> pieces;
     public:
-        std::vector<Piece*> pieces;
         //------------------------
-        Board( char * input_info_p);
-        Piece * GetMove();
+        Board( const char * input_info_p );
+        Piece Parse( const char str_piece_v[4] );
     };
 
 }

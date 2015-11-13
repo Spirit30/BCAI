@@ -15,7 +15,7 @@ namespace BCAI {
     class Pawn : public Piece
     {
     public:
-       Pawn( char _x_v, char _y_v, unsigned int _score_v = 1 ) : Piece( _x_v, _y_v, _score_v ) {};
+       Pawn( Position _position_v, unsigned int _score_v, bool _white_v )  : Piece(_position_v, _score_v, _white_v) {};
     };
 }
 

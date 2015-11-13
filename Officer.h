@@ -15,7 +15,7 @@ namespace BCAI {
     class Officer : public Piece
     {
     public:
-        Officer( char _x_v, char _y_v, unsigned int _score_v = 3 ) : Piece( _x_v, _y_v, _score_v ) {};
+        Officer( Position _position_v, unsigned int _score_v, bool _white_v )  : Piece(_position_v, _score_v, _white_v) {};
     };
 }
 #endif /* defined(__BCAI__Officer__) */
