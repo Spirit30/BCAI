@@ -29,7 +29,7 @@ namespace BCAI {
         }
         
         
-        //Parse data to Pieces list and Tiles array
+        //Parse Pieces data to Pieces list and to Tiles array
         for( int str_piece_index_l = 0; str_piece_index_l < strlen(input_info_p); str_piece_index_l+=4 ) {
             
             //std::cout << "Piece Index: " << str_piece_index_l << std::endl;
@@ -46,15 +46,12 @@ namespace BCAI {
                 y_l
             };
             
-            Piece piece = Parse( str_piece_l );
-            pieces.push_back(piece);
-            //std::cout << (x_l - 'A') << " - " << (y_l - '0') << std::endl;
-            tiles_table_v[x_l - 'A'][y_l - '0']->PutPiece( & pieces[str_piece_index_l] );
+            pieces.push_back( Parse( str_piece_l ) );
+            tiles_table_v[x_l - 'A'][y_l - '0']->PutPiece( & pieces[pieces.size() -1] );
         }
         
-        //std::cout << tiles_table_v[0][0]->Empty() << std::endl;
-        std::cout << tiles_table_v[7][7]->Empty() << std::endl;
-        std::cout << (tiles_table_v[7][7]->piece_p->GetScore()) << std::endl;
+        std::cout << "Empty? - " << tiles_table_v[0][0]->Empty() << std::endl;
+        std::cout << "Score: " << (tiles_table_v[0][0]->piece_p->GetScore()) << std::endl;
     }
     
     //Pieces Factory
@@ -63,20 +60,20 @@ namespace BCAI {
         bool white_l = str_piece_p[0] == '+';
         Position pos_l( str_piece_p[2], str_piece_p[3] - '0' );
         
-        unsigned int king_score_l = 30;
-        unsigned int queen_score_l = 9;
-        unsigned int rook_score_l = 5;
-        unsigned int steed_officer_score_l = 3;
-        unsigned int pawn_score_l = 1;
+        //unsigned int king_score_l = 30;
+        //unsigned int queen_score_l = 9;
+        //unsigned int rook_score_l = 5;
+        //unsigned int steed_officer_score_l = 3;
+        //unsigned int pawn_score_l = 1;
         
         switch ( str_piece_p[1] ) {
                 
-            case 'K':       return King( pos_l, king_score_l, white_l );
-            case 'Q':       return Queen( pos_l, queen_score_l, white_l );
-            case 'R':       return Rook( pos_l, rook_score_l, white_l );
-            case 'S':       return Steed( pos_l, steed_officer_score_l, white_l );      //Knight
-            case 'O':       return Officer( pos_l, steed_officer_score_l, white_l );    //Bishop
-            default:        return Pawn( pos_l, pawn_score_l, white_l );
+            case 'K':       return King( pos_l, 30, white_l );
+            case 'Q':       return Queen( pos_l, 9, white_l );
+            case 'R':       return Rook( pos_l, 5, white_l );
+            case 'S':       return Steed( pos_l, 3, white_l );      //Knight
+            case 'O':       return Officer( pos_l, 3, white_l );    //Bishop
+            default:        return Pawn( pos_l, 1, white_l );
         }
     }
     

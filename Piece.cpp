@@ -15,7 +15,6 @@ namespace BCAI {
     
     unsigned int Piece::GetScore() {
         
-        std::cout << "GetScore: " << score_v << '\n';
         return score_v;
     }
     

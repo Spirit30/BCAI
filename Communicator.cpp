@@ -13,11 +13,7 @@
 namespace BCAI {
     
     //Init Point for AI block
-    char * Communicator::GetDecision( const char * input_game_p ) {
-        
-       
-        Board board( input_game_p );
-        
+    char * Communicator::GetDecision( const char * input_game_p ) const {
         
         //...
         char  * AI_move = new char[4] /*{ 'A', '7', 'A', '6' }*/ ;
@@ -30,5 +26,18 @@ namespace BCAI {
         InputFill(AI_move);
         
         return AI_move;
+    }
+    
+    bool Communicator::RulesAdvisor( const char * input_game_p, const char * input_move_p, bool white_turn_v ) const {
+        
+        Board board( input_game_p );
+        
+        
+        
+        //HERE ...
+        
+        
+        
+        return false;
     }
 }

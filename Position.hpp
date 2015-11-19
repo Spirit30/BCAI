@@ -12,12 +12,10 @@
 #include <stdio.h>
 namespace BCAI {
     
-    class Position {
+    struct Position {
         
-    private:
         const char x;
         const unsigned int y;
-    public:
         Position( char _x, unsigned int _y ) : x(_x), y(_y) { };
     };
 }

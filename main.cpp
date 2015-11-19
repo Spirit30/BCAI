@@ -11,7 +11,10 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
-//#include <string>
+    #ifdef WIN_BCAI
+    #include <string>
+    #endif
+#include <exception>
 #include "Communicator.h"
 
 //FRONTEND Classes
@@ -247,15 +250,86 @@ char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
 
 //-----------------------
 
+class InputSideEx: public std::exception
+{
+    virtual const char* what() const throw() {
+        
+        return "Invalid input. Please use 'w' or 'b' chars only.";
+    }
+    
+} inputSideEx;
+
+//-----------------------
+
+//True if White
+bool ChooseSide() {
+    
+    std::cout << "Choose white or black: w / b ?" << std::endl;
+    char color_l = '\0';
+    bool choosed = false;
+    while ( std::cin && !choosed ) {
+        
+        try {
+            
+            std::cin >> color_l;
+            color_l = std::tolower(color_l);
+            choosed = color_l == 'w' || color_l == 'b';
+            if( !choosed ) throw inputSideEx;
+        }
+        catch( std::exception & inputSideEx ) {
+            
+            std::cin.clear();
+            std::cout << inputSideEx.what() << std::endl;
+        }
+    }
+    std::cin.get();
+    
+    bool result = color_l == 'w';
+    std::cout << "Thank you! USER 1 side is: " << ( result ? "White" : "Black" ) << ", USER 2 side is: " << ( ! result ? "White" : "Black" ) << std::endl << std::endl;
+    return result;
+}
+
+//-----------------------
+
+class InputMoveEx: public std::exception
+{
+    virtual const char* what() const throw() {
+        
+        return "Invalid input. Please use chars A-H and digits 1-8.";
+    }
+    
+} inputMoveEx;
+
+//-----------------------
+
 void InputFill( char * input_storage_p ) {
     
     const unsigned int input_length_l = 4;
     unsigned int char_index_l = 0;
     
-    while (std::cin && char_index_l < input_length_l)
-    {
-        std::cin.get (input_storage_p[char_index_l]) ;
-        char_index_l++;
+    while (std::cin && char_index_l < input_length_l) {
+        
+        try {
+            
+            std::cin.get (input_storage_p[char_index_l]);
+            input_storage_p[char_index_l] = toupper(input_storage_p[char_index_l]);
+            
+            //Check if input chars are NOT related to coordinates system
+            if( (input_storage_p[char_index_l] < 'A' || input_storage_p[char_index_l] > 'H') &&
+                (input_storage_p[char_index_l] < '1' || input_storage_p[char_index_l] > '8') ) {
+                
+                throw inputMoveEx;
+            }
+            else {
+                
+                char_index_l++;
+            }
+        }
+        catch (std::exception & inputMoveEx) {
+            
+            char_index_l = 0;
+            std::cout << inputMoveEx.what() << std::endl;
+        }
     }
     std::cin.get();
 }
@@ -276,12 +350,28 @@ void Print( GameState & game_state_r, const char * move_p ) {
 
 //-----------------------
 
+void UserMove( const BCAI::Communicator & communicator, const char * input_game_p, char * move_p, bool white_side_l ) {
+    
+    bool validMove = false;
+    while ( ! validMove ) {
+        
+        InputFill(move_p);
+        validMove = communicator.RulesAdvisor( input_game_p, move_p, white_side_l );
+        if( ! validMove ) std::cout << "This move is not allowed! Please, repeat input." << std::endl;
+    }
+}
+
+//-----------------------
+
 int main(int argc, const char * argv[]) {
+    
+    //User side
+    bool white_side_l = ChooseSide();
     
     //Frontend memory stored in argv[0] if call from other app
     GameState game_state_v;
     
-    //Get AI MOVE
+    //AI ENTRY POINT
     BCAI::Communicator communicator;
     
     //MAIN LOOP
@@ -293,12 +383,12 @@ int main(int argc, const char * argv[]) {
         if( turn_l % 2 ) {
             
             std::cout << "USER 1 MOVE # " << turn_l << std::endl;
-            InputFill(move_p);
+            UserMove( communicator, game_state_v.Get(), move_p, white_side_l );
         }
         else {
             
             std::cout << "USER 2 MOVE # " << turn_l << std::endl;
-            move_p = communicator.GetDecision(game_state_v.Get());
+            UserMove( communicator, game_state_v.Get(), move_p, ! white_side_l );
         }
         
         Print( game_state_v, move_p );
