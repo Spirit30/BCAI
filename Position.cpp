@@ -7,3 +7,11 @@
 //
 
 #include "Position.hpp"
+
+namespace BCAI {
+    
+    bool Position::operator == ( Position & other )const {
+        
+        return this->x == other.x && this->y == other.y;
+    }
+}

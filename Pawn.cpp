@@ -7,8 +7,3 @@
 //
 
 #include "Pawn.h"
-namespace BCAI {
-    
- 
-    
-}

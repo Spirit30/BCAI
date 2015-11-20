@@ -18,4 +18,9 @@ namespace BCAI {
         
         return ! piece_p;
     }
+    
+    Position & Tile::GetAdress() {
+        
+        return adress_v;
+    }
 }

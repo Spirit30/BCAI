@@ -38,6 +38,6 @@ namespace BCAI {
         
         
         
-        return false;
+        return true;
     }
 }

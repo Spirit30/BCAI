@@ -11,6 +11,11 @@
 
 #include <stdio.h>
 #include <vector>
+
+
+#include <typeinfo>
+
+
 //-------------------
 #include "Position.hpp"
 
@@ -26,14 +31,18 @@ namespace BCAI {
         bool white_v;
         Position position_v;
         unsigned int score_v;
+        char type_v;
     protected:
         //variables
         std::vector<Position> avaliable_positions_v;
+        //const char * GetPieceStr( const char type );
     public:
-        Piece( Position _position_v, unsigned int _score_v, bool _white_v ) : position_v(_position_v), score_v(_score_v), white_v(_white_v) { };
+        Piece( Position _position_v, unsigned int _score_v, bool _white_v, char _type_v ) : position_v(_position_v), score_v(_score_v), white_v(_white_v), type_v(_type_v) { };
         //virtual std::vector<Position> Avaliable();
         unsigned int GetScore();
-
+        Position & GetPosition();
+        char GetType();
+        
     };
     
 }

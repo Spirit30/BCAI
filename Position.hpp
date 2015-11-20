@@ -17,6 +17,7 @@ namespace BCAI {
         const char x;
         const unsigned int y;
         Position( char _x, unsigned int _y ) : x(_x), y(_y) { };
+        bool operator == ( Position & other ) const;
     };
 }
 #endif /* Position_hpp */

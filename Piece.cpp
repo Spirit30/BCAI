@@ -18,4 +18,14 @@ namespace BCAI {
         return score_v;
     }
     
+    Position & Piece::GetPosition() {
+        
+        return position_v;
+    }
+    
+    char Piece::GetType() {
+        
+        return type_v;
+    }
+    
 }

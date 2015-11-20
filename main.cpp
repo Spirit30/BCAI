@@ -82,6 +82,7 @@ private:
     char * game_p;
 public:
     GameState();
+    void Save( char * previous_move_p, char * move_p );
     char * Get();
     size_t Length();
 };
@@ -96,7 +97,24 @@ GameState::GameState() {
     }
 }
 
-
+void GameState::Save( char * previous_move_p, char * move_p ) {
+    
+    for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l+=4 ) {
+     
+        bool mathched_l = false;
+        for( int i = 2; i < 4; i++) {
+            
+            int index = str_piece_index_l + i;
+            if( mathched_l ) previous_move_p[ index ] = game_p[ index ] = move_p[ index ];
+            else if( game_p[ index ] != previous_move_p[ index ] ) break;
+            else if( i == 3 ) {
+                
+                mathched_l = true;
+                i = 2;
+            }
+        }
+    }
+}
 
 char * GameState::Get() {
     
@@ -357,6 +375,7 @@ void UserMove( const BCAI::Communicator & communicator, const char * input_game_
         
         InputFill(move_p);
         validMove = communicator.RulesAdvisor( input_game_p, move_p, white_side_l );
+        
         if( ! validMove ) std::cout << "This move is not allowed! Please, repeat input." << std::endl;
     }
 }
@@ -374,6 +393,7 @@ int main(int argc, const char * argv[]) {
     //AI ENTRY POINT
     BCAI::Communicator communicator;
     
+    char * previous_move_p = new char[4];
     //MAIN LOOP
     int turn_l = 1;
     while ( turn_l < INT_MAX ) {
@@ -384,11 +404,13 @@ int main(int argc, const char * argv[]) {
             
             std::cout << "USER 1 MOVE # " << turn_l << std::endl;
             UserMove( communicator, game_state_v.Get(), move_p, white_side_l );
+            game_state_v.Save( previous_move_p, move_p );
         }
         else {
             
             std::cout << "USER 2 MOVE # " << turn_l << std::endl;
             UserMove( communicator, game_state_v.Get(), move_p, ! white_side_l );
+            game_state_v.Save( previous_move_p, move_p );
         }
         
         Print( game_state_v, move_p );
@@ -397,6 +419,7 @@ int main(int argc, const char * argv[]) {
         //Print( game_state_v, communicator.GetDecision(game_state_v.Get()) );
         turn_l++;
     }
+    delete[] previous_move_p;
     
 #ifdef WIN_BCAI
 	system("Pause");
