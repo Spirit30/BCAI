@@ -82,7 +82,7 @@ private:
     char * game_p;
 public:
     GameState();
-    void Save( char * previous_move_p, char * move_p );
+    void Save( char * move_p );
     char * Get();
     size_t Length();
 };
@@ -97,20 +97,59 @@ GameState::GameState() {
     }
 }
 
-void GameState::Save( char * previous_move_p, char * move_p ) {
+void GameState::Save( char * move_p ) {
     
+    std::cout << game_p << std::endl;
+
+    //DELETE beated Piece
+    //Foreach str-Piece: +RA1
     for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l+=4 ) {
      
-        bool mathched_l = false;
         for( int i = 2; i < 4; i++) {
             
             int index = str_piece_index_l + i;
-            if( mathched_l ) previous_move_p[ index ] = game_p[ index ] = move_p[ index ];
-            else if( game_p[ index ] != previous_move_p[ index ] ) break;
+
+            if( game_p[ index ] != move_p[ i ] ) {
+                
+                break;
+            }
+            //If pos of new move == one of the pieces position -> DELETE this piece
             else if( i == 3 ) {
                 
-                mathched_l = true;
-                i = 2;
+                size_t len_l = Length() -4 +1;
+                char temp_game_l[ len_l ];
+                std::strncpy( temp_game_l, game_p, index -3 );
+                temp_game_l[ index -3 ] = '\0';
+                std::strcat(temp_game_l, game_p + index + 1);
+                temp_game_l[ index +1 ] = '\0';
+                delete[] game_p;
+                game_p = new char [ len_l ];
+                std::strcpy(game_p, temp_game_l);
+                
+                std::cout << "DELETED Piece" << std::endl;
+                std::cout << game_p << std::endl;
+            }
+        }
+    }
+    
+    //SAVE moved Piece
+    //Foreach str-Piece: +RA1
+    for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l+=4 ) {
+        
+        for( int i = 2; i < 4; i++) {
+            
+            int index = str_piece_index_l + i;
+            
+            if( game_p[ index ] != move_p[ i -2 ] ) {
+                
+                break;
+            }
+            else if( i == 3 ) {
+                
+                game_p[ index -1 ] = move_p[ i -1 ];
+                game_p[ index ] = move_p[ i ];
+                std::cout << "REC" << std::endl;
+                std::cout << game_p << std::endl;
             }
         }
     }
@@ -404,13 +443,13 @@ int main(int argc, const char * argv[]) {
             
             std::cout << "USER 1 MOVE # " << turn_l << std::endl;
             UserMove( communicator, game_state_v.Get(), move_p, white_side_l );
-            game_state_v.Save( previous_move_p, move_p );
+            game_state_v.Save( move_p );
         }
         else {
             
             std::cout << "USER 2 MOVE # " << turn_l << std::endl;
             UserMove( communicator, game_state_v.Get(), move_p, ! white_side_l );
-            game_state_v.Save( previous_move_p, move_p );
+            game_state_v.Save( move_p );
         }
         
         Print( game_state_v, move_p );
