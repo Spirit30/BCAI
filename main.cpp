@@ -99,32 +99,37 @@ GameState::GameState() {
 
 void GameState::Save( char * move_p ) {
     
+    std::cout << "BEFORE" << std::endl;
     std::cout << game_p << std::endl;
 
     //DELETE beated Piece
     //Foreach str-Piece: +RA1
     for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l+=4 ) {
      
+        //foreach char
         for( int i = 2; i < 4; i++) {
             
-            int index = str_piece_index_l + i;
+            int index_l = str_piece_index_l + i;
 
-            if( game_p[ index ] != move_p[ i ] ) {
+            if( game_p[ index_l ] != move_p[ i ] ) {
                 
                 break;
             }
             //If pos of new move == one of the pieces position -> DELETE this piece
             else if( i == 3 ) {
+            
+                std::cout  << "INDEX: " << index_l << std::endl;
                 
-                size_t len_l = Length() -4 +1;
+                size_t len_l = Length() -4;
                 char temp_game_l[ len_l ];
-                std::strncpy( temp_game_l, game_p, index -3 );
-                temp_game_l[ index -3 ] = '\0';
-                std::strcat(temp_game_l, game_p + index + 1);
-                temp_game_l[ index +1 ] = '\0';
+                for( int t = 0, c = 0; c < len_l; t++, c++ ) {
+                    
+                    if( c == index_l -3 ) c += 4;
+                    temp_game_l[ t ] = game_p[ c ];
+                }
                 delete[] game_p;
-                game_p = new char [ len_l ];
-                std::strcpy(game_p, temp_game_l);
+                game_p = new char [ len_l +1 ];
+                strcpy( game_p, temp_game_l );
                 
                 std::cout << "DELETED Piece" << std::endl;
                 std::cout << game_p << std::endl;
@@ -153,6 +158,11 @@ void GameState::Save( char * move_p ) {
             }
         }
     }
+    
+    
+    
+    std::cout << "RESULT" << std::endl;
+    std::cout << game_p << std::endl;
 }
 
 char * GameState::Get() {
