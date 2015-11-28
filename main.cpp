@@ -5,7 +5,7 @@
 //  Created by Max Botviniev on 15.10.15.
 //  Copyright (c) 2015 Max Botviniev. All rights reserved.
 //
-//#define WIN_BCAI
+#define WIN_BCAI
 //#define MAC_BCAI
 
 #include <iostream>
@@ -16,6 +16,8 @@
     #endif
 #include <exception>
 #include "Communicator.h"
+
+using namespace std;
 
 //FRONTEND Classes
 //-----------------------
@@ -51,7 +53,7 @@ private:
         piece_info_v[3] = piece_info_r[0] ? piece_info_r[1] : FillInternalSpace();
         
         tile_info_v[1] = x_r;
-        tile_info_v[2] = std::to_string(y_r)[0];
+        tile_info_v[2] = to_string(y_r)[0];
         tile_info_v[3] = tile_info_v[4] = piece_info_v[1] = piece_info_v[4] = FillInternalSpace();
         
         tile_info_v[0] = tile_info_v[5] = piece_info_v[0] = piece_info_v[5] = '|';
@@ -90,17 +92,14 @@ public:
 GameState::GameState() {
     
     char init_game_l[] = "+RA1+SB1+OC1+QD1+KE1+OF1+SG1+RH1+PA2+PB2+PC2+PD2+PE2+PF2+PG2+PH2-PA7-PB7-PC7-PD7-PE7-PF7-PG7-PH7-RA8-SB8-OC8-QD8-KE8-OF8-SG8-RH8";
-    game_p = new char[128];
-    for(int i = 0; i < std::strlen(init_game_l); i++) {
-        
-        game_p[i] = init_game_l[i];
-    }
+    game_p = new char[129];
+	strcpy(game_p, init_game_l);
 }
 
 void GameState::Save( char * move_p ) {
     
-    std::cout << "BEFORE" << std::endl;
-    std::cout << game_p << std::endl;
+    cout << "BEFORE" << endl;
+    cout << game_p << endl;
 
     //DELETE beated Piece
     //Foreach str-Piece: +RA1
@@ -118,21 +117,25 @@ void GameState::Save( char * move_p ) {
             //If pos of new move == one of the pieces position -> DELETE this piece
             else if( i == 3 ) {
             
-                std::cout  << "INDEX: " << index_l << std::endl;
+                cout  << "INDEX: " << index_l << endl;
                 
                 size_t len_l = Length() -4;
-                char temp_game_l[ len_l ];
-                for( int t = 0, c = 0; c < len_l; t++, c++ ) {
+				char * temp_game_l = new char[ len_l ];
+                for( int t = 0, g = 0; g < len_l -1; t++, g++ ) {
                     
-                    if( c == index_l -3 ) c += 4;
-                    temp_game_l[ t ] = game_p[ c ];
+                    
+                    temp_game_l[ t ] = game_p[ g ];
+					if (g == index_l - 2) break; //g += 4;
                 }
-                delete[] game_p;
-                game_p = new char [ len_l +1 ];
+
+				delete[] game_p;
+                game_p = new char [ len_l ];
                 strcpy( game_p, temp_game_l );
-                
-                std::cout << "DELETED Piece" << std::endl;
-                std::cout << game_p << std::endl;
+				game_p[len_l - 1] = '\0';
+				delete[] temp_game_l;
+
+                cout << "DELETED Piece" << endl;
+                cout << game_p << endl;
             }
         }
     }
@@ -153,16 +156,16 @@ void GameState::Save( char * move_p ) {
                 
                 game_p[ index -1 ] = move_p[ i -1 ];
                 game_p[ index ] = move_p[ i ];
-                std::cout << "REC" << std::endl;
-                std::cout << game_p << std::endl;
+                cout << "REC" << endl;
+                cout << game_p << endl;
             }
         }
     }
     
     
     
-    std::cout << "RESULT" << std::endl;
-    std::cout << game_p << std::endl;
+    cout << "RESULT" << endl;
+    cout << game_p << endl;
 }
 
 char * GameState::Get() {
@@ -172,13 +175,13 @@ char * GameState::Get() {
 
 size_t GameState::Length() {
     
-    return std::strlen(game_p);
+    return strlen(game_p);
 }
 
 //FRONTEND
 //-----------------------
 
-std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const char * decision_p, char * game_p )
+vector<Tile> ParseDecision( vector<Tile> & parsed_decision_r, const char * decision_p, char * game_p )
 {
 
     bool decision_aplied_l = false;
@@ -221,14 +224,14 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
                    game_p[ piece_index_l + 2 ] = decision_p[ 2 ];
                    game_p[ piece_index_l + 3 ] = decision_p[ 3 ];
                     
-                    //std::cout << "Move: " << decision_p << std::endl;
+                    //cout << "Move: " << decision_p << endl;
                     decision_aplied_l = true;
                 }
             }
             
             //Compare pieces position to current Tile
-            //std::cout << x_v << "_vs_" << game[ piece_index_l + 2 ] << std::endl;
-            //std::cout << y_v << "_vs_" << (game[ piece_index_l + 3 ] - '0') << std::endl;
+            //cout << x_v << "_vs_" << game[ piece_index_l + 2 ] << endl;
+            //cout << y_v << "_vs_" << (game[ piece_index_l + 3 ] - '0') << endl;
             
             //If Piece position equals to current Tile
             if( x_v == game_p[ piece_index_l + 2 ] &&
@@ -237,7 +240,7 @@ std::vector<Tile> ParseDecision( std::vector<Tile> & parsed_decision_r, const ch
                 piece_l[0] = game_p[ piece_index_l ];
                 piece_l[1] = game_p[ piece_index_l + 1 ];
                 
-                //std::cout << piece_l << std::endl;
+                //cout << piece_l << endl;
             }
         }
         
@@ -259,16 +262,15 @@ inline unsigned int ClampTilesRowOrder( unsigned int index )
 
 //-----------
 
-char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
+char * SerializeToOutput( const vector<Tile> & parsed_decision_r ) {
 
     //Data
     //-----------
     const unsigned int CHARS_PER_LINE = Tile::CHARS_PER_ROW * Tile::TILES_PER_AXE; // 6 horisontal chars for Tile * 8 horizontal Tiles per Board
     const unsigned int LINES_PER_BOARD = Tile::ROWS * Tile::TILES_PER_AXE; // 3 rows per Tile * 8 vertical Tiles per Board
     
-    const unsigned int OUTPUT_LENGHT =  CHARS_PER_LINE * LINES_PER_BOARD +
-                                        LINES_PER_BOARD + // '\n' for each row
-                                        1; // for '\0' terminator
+    const unsigned int OUTPUT_LENGHT =  CHARS_PER_LINE * LINES_PER_BOARD 
+		+ 3; // for '\0' terminator and '\n' and one more for some reason... to work correct
     
     //Fill
     //-----------
@@ -293,7 +295,7 @@ char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
             //Return index of Tiles
             tile_index_l = line_index_l / Tile::ROWS * Tile::TILES_PER_AXE;
             line_index_l++;
-            //std::cout << "_Vertical_return_" << tile_index_l << std::endl;
+            //cout << "_Vertical_return_" << tile_index_l << endl;
         }
         else {
             
@@ -302,7 +304,7 @@ char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
 
             //Update index offset of current Tile
             if( tile_row_char_index_l == 0 ) tile_index_l++;
-            //std::cout << "_Horizontal_offset_" << tile_index_l  << std::endl;
+            //cout << "_Horizontal_offset_" << tile_index_l  << endl;
             
             //Insert current symbol to output text
             resullt_p[ symbol_index_l ] = parsed_decision_r[ tile_index_l ].GetLine( tiles_row_index_l )[ tile_row_char_index_l ];
@@ -310,14 +312,15 @@ char * SerializeToOutput( const std::vector<Tile> & parsed_decision_r ) {
         }
         symbol_index_l++;
     }
-    resullt_p[ OUTPUT_LENGHT -1 ] = '\0';
+	resullt_p[OUTPUT_LENGHT -2 ] = '\0';
+    resullt_p[ OUTPUT_LENGHT -1 ] = '\n';
     
     return resullt_p;
 }
 
 //-----------------------
 
-class InputSideEx: public std::exception
+class InputSideEx: public exception
 {
     virtual const char* what() const throw() {
         
@@ -331,34 +334,34 @@ class InputSideEx: public std::exception
 //True if White
 bool ChooseSide() {
     
-    std::cout << "Choose white or black: w / b ?" << std::endl;
+    cout << "Choose white or black: w / b ?" << endl;
     char color_l = '\0';
     bool choosed = false;
-    while ( std::cin && !choosed ) {
+    while ( cin && !choosed ) {
         
         try {
             
-            std::cin >> color_l;
-            color_l = std::tolower(color_l);
+            cin >> color_l;
+            color_l = tolower(color_l);
             choosed = color_l == 'w' || color_l == 'b';
             if( !choosed ) throw inputSideEx;
         }
-        catch( std::exception & inputSideEx ) {
+        catch( exception & inputSideEx ) {
             
-            std::cin.clear();
-            std::cout << inputSideEx.what() << std::endl;
+            cin.clear();
+            cout << inputSideEx.what() << endl;
         }
     }
-    std::cin.get();
+    cin.get();
     
     bool result = color_l == 'w';
-    std::cout << "Thank you! USER 1 side is: " << ( result ? "White" : "Black" ) << ", USER 2 side is: " << ( ! result ? "White" : "Black" ) << std::endl << std::endl;
+    cout << "Thank you! USER 1 side is: " << ( result ? "White" : "Black" ) << ", USER 2 side is: " << ( ! result ? "White" : "Black" ) << endl << endl;
     return result;
 }
 
 //-----------------------
 
-class InputMoveEx: public std::exception
+class InputMoveEx: public exception
 {
     virtual const char* what() const throw() {
         
@@ -374,11 +377,11 @@ void InputFill( char * input_storage_p ) {
     const unsigned int input_length_l = 4;
     unsigned int char_index_l = 0;
     
-    while (std::cin && char_index_l < input_length_l) {
+    while (cin && char_index_l < input_length_l) {
         
         try {
             
-            std::cin.get (input_storage_p[char_index_l]);
+            cin.get (input_storage_p[char_index_l]);
             input_storage_p[char_index_l] = toupper(input_storage_p[char_index_l]);
             
             //Check if input chars are NOT related to coordinates system
@@ -392,26 +395,26 @@ void InputFill( char * input_storage_p ) {
                 char_index_l++;
             }
         }
-        catch (std::exception & inputMoveEx) {
+        catch (exception & inputMoveEx) {
             
             char_index_l = 0;
-            std::cout << inputMoveEx.what() << std::endl;
+            cout << inputMoveEx.what() << endl;
         }
     }
-    std::cin.get();
+    cin.get();
 }
 
 //-----------------------
 
 void Print( GameState & game_state_r, const char * move_p ) {
     //Parse MOVE string to this Frontend data structure ( list of Tiles )
-    std::vector<Tile> parsed_decision_v;
+    vector<Tile> parsed_decision_v;
  
     parsed_decision_v = ParseDecision( parsed_decision_v, move_p, game_state_r.Get() );
     
     //Serialize list of Tiles to output string
     char * output = SerializeToOutput( parsed_decision_v );
-    std::cout << output;
+    cout << output;
     delete[] output;
 }
 
@@ -423,9 +426,9 @@ void UserMove( const BCAI::Communicator & communicator, const char * input_game_
     while ( ! validMove ) {
         
         InputFill(move_p);
-        validMove = communicator.RulesAdvisor( input_game_p, move_p, white_side_l );
+		validMove = true;	//communicator.RulesAdvisor( input_game_p, move_p, white_side_l );
         
-        if( ! validMove ) std::cout << "This move is not allowed! Please, repeat input." << std::endl;
+        if( ! validMove ) cout << "This move is not allowed! Please, repeat input." << endl;
     }
 }
 
@@ -451,13 +454,13 @@ int main(int argc, const char * argv[]) {
         
         if( turn_l % 2 ) {
             
-            std::cout << "USER 1 MOVE # " << turn_l << std::endl;
+            cout << "USER 1 MOVE # " << turn_l << endl;
             UserMove( communicator, game_state_v.Get(), move_p, white_side_l );
             game_state_v.Save( move_p );
         }
         else {
             
-            std::cout << "USER 2 MOVE # " << turn_l << std::endl;
+            cout << "USER 2 MOVE # " << turn_l << endl;
             UserMove( communicator, game_state_v.Get(), move_p, ! white_side_l );
             game_state_v.Save( move_p );
         }
