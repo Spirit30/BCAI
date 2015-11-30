@@ -5,7 +5,7 @@
 //  Created by Max Botviniev on 15.10.15.
 //  Copyright (c) 2015 Max Botviniev. All rights reserved.
 //
-#define WIN_BCAI
+//#define WIN_BCAI
 //#define MAC_BCAI
 
 #include <iostream>
@@ -82,6 +82,7 @@ class GameState
 {
 private:
     char * game_p;
+    bool ComparePredicate( const char * move_p, unsigned int index_v );
 public:
     GameState();
     void Save( char * move_p );
@@ -96,48 +97,49 @@ GameState::GameState() {
 	strcpy(game_p, init_game_l);
 }
 
-void GameState::Save( char * move_p ) {
+bool GameState::ComparePredicate( const char * move_p, unsigned int index_v ) {
     
+    //For 2 last characters
+    for( int c = 3; c > 1; c-- ) {
+        
+        if( move_p[ c ] != game_p[ index_v + c ] ) return false;
+        //cout << game_p[ index_v + c ];
+    }
+    
+    //cout << "TRUE" << endl;
+    
+    return true;
+}
+
+
+void GameState::Save( char * move_p ) {
+
     cout << "BEFORE" << endl;
     cout << game_p << endl;
-
+    
     //DELETE beated Piece
+    
     //Foreach str-Piece: +RA1
-    for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l+=4 ) {
-     
-        //foreach char
-        for( int i = 2; i < 4; i++) {
+    for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l += 4 ) {
+        
+        //If pos of new move == one of the pieces position -> DELETE this piece
+        if( ComparePredicate(move_p, str_piece_index_l) ) {
             
-            int index_l = str_piece_index_l + i;
-
-            if( game_p[ index_l ] != move_p[ i ] ) {
-                
-                break;
-            }
-            //If pos of new move == one of the pieces position -> DELETE this piece
-            else if( i == 3 ) {
+            size_t len_l = Length() -4;
+            char temp_game_l[ len_l ];
+            strncpy(temp_game_l, game_p, str_piece_index_l);
+            temp_game_l[ str_piece_index_l + 1] = '\0';
+            strncat(temp_game_l, game_p + str_piece_index_l + 4, len_l - str_piece_index_l);
             
-                cout  << "INDEX: " << index_l << endl;
-                
-                size_t len_l = Length() -4;
-				char * temp_game_l = new char[ len_l ];
-                for( int t = 0, g = 0; g < len_l -1; t++, g++ ) {
-                    
-                    
-                    temp_game_l[ t ] = game_p[ g ];
-					if (g == index_l - 2) break; //g += 4;
-                }
-
-				delete[] game_p;
-                game_p = new char [ len_l ];
-                strcpy( game_p, temp_game_l );
-				game_p[len_l - 1] = '\0';
-				delete[] temp_game_l;
-
-                cout << "DELETED Piece" << endl;
-                cout << game_p << endl;
-            }
+            delete[] game_p;
+            game_p = new char [ len_l +1 ];
+            strcpy( game_p, temp_game_l );
+            
+            cout << "DELETED Piece" << endl;
+            cout << game_p << endl;
+            
         }
+        
     }
     
     //SAVE moved Piece
@@ -148,10 +150,7 @@ void GameState::Save( char * move_p ) {
             
             int index = str_piece_index_l + i;
             
-            if( game_p[ index ] != move_p[ i -2 ] ) {
-                
-                break;
-            }
+            if( game_p[ index ] != move_p[ i -2 ] ) break;
             else if( i == 3 ) {
                 
                 game_p[ index -1 ] = move_p[ i -1 ];
@@ -161,11 +160,6 @@ void GameState::Save( char * move_p ) {
             }
         }
     }
-    
-    
-    
-    cout << "RESULT" << endl;
-    cout << game_p << endl;
 }
 
 char * GameState::Get() {
