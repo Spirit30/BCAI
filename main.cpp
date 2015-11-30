@@ -9,7 +9,7 @@
 //#define MAC_BCAI
 
 #include <iostream>
-#include <cstdio>
+//#include <cstdio>
 #include <vector>
     #ifdef WIN_BCAI
     #include <string>
@@ -128,7 +128,7 @@ void GameState::Save( char * move_p ) {
             size_t len_l = Length() -4;
             char temp_game_l[ len_l ];
             strncpy(temp_game_l, game_p, str_piece_index_l);
-            temp_game_l[ str_piece_index_l + 1] = '\0';
+            temp_game_l[ str_piece_index_l ] = '\0';
             strncat(temp_game_l, game_p + str_piece_index_l + 4, len_l - str_piece_index_l);
             
             delete[] game_p;
@@ -401,6 +401,7 @@ void InputFill( char * input_storage_p ) {
 //-----------------------
 
 void Print( GameState & game_state_r, const char * move_p ) {
+    
     //Parse MOVE string to this Frontend data structure ( list of Tiles )
     vector<Tile> parsed_decision_v;
  
@@ -416,13 +417,10 @@ void Print( GameState & game_state_r, const char * move_p ) {
 
 void UserMove( const BCAI::Communicator & communicator, const char * input_game_p, char * move_p, bool white_side_l ) {
     
-    bool validMove = false;
-    while ( ! validMove ) {
+    while ( ! communicator.RulesAdvisor( input_game_p, move_p, white_side_l ) ) {
         
         InputFill(move_p);
-		validMove = true;	//communicator.RulesAdvisor( input_game_p, move_p, white_side_l );
-        
-        if( ! validMove ) cout << "This move is not allowed! Please, repeat input." << endl;
+        //if( ! validMove ) cout << "This move is not allowed! Please, repeat input." << endl;
     }
 }
 
@@ -448,21 +446,21 @@ int main(int argc, const char * argv[]) {
         
         if( turn_l % 2 ) {
             
-            cout << "USER 1 MOVE # " << turn_l << endl;
+            cout << "USER 1 MOVE # " << turn_l << " (" << ( white_side_l ? " WHITE )" : " BLACK )" ) << endl;
             UserMove( communicator, game_state_v.Get(), move_p, white_side_l );
             game_state_v.Save( move_p );
         }
         else {
             
-            cout << "USER 2 MOVE # " << turn_l << endl;
+            cout << "USER 2 MOVE # " << turn_l << " (" << ( white_side_l ? " BLACK )" : " WHITE )" ) << endl;
             UserMove( communicator, game_state_v.Get(), move_p, ! white_side_l );
             game_state_v.Save( move_p );
         }
         
+        //Print( game_state_v, communicator.GetDecision(game_state_v.Get()) );
         Print( game_state_v, move_p );
         delete[] move_p;
         
-        //Print( game_state_v, communicator.GetDecision(game_state_v.Get()) );
         turn_l++;
     }
     delete[] previous_move_p;

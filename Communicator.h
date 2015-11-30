@@ -19,8 +19,8 @@ namespace BCAI {
     class Communicator {
         
     public:
-        char * GetDecision( const char * input_game_p ) const;
-        bool RulesAdvisor( const char * input_game_p, const char * input_move_p, bool white_turn_v ) const;
+        char * GetDecision( const char * game_p ) const;
+        bool RulesAdvisor( const char * game_p, const char * move_p, bool white_turn_v ) const;
     };
     
 }

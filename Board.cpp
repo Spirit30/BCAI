@@ -30,7 +30,7 @@ namespace BCAI {
         
         
         //Parse Pieces data to Pieces list and to Tiles array
-        for( int str_piece_index_l = 0; str_piece_index_l < strlen(input_info_p); str_piece_index_l+=4 ) {
+        for( int str_piece_index_l = 0; str_piece_index_l < strlen(input_info_p); str_piece_index_l += 4 ) {
             
             char x_l = input_info_p[str_piece_index_l +2];
             char y_l = input_info_p[str_piece_index_l +3];
