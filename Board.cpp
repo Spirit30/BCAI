@@ -8,11 +8,6 @@
 
 #include "Board.h"
 
-
-//-------------
-//DEBUG
-#include <iostream>
-
 namespace BCAI {
     
     Board::Board( const char * input_info_p)
@@ -32,27 +27,20 @@ namespace BCAI {
         //Parse Pieces data to Pieces list and to Tiles array
         for( int str_piece_index_l = 0; str_piece_index_l < strlen(input_info_p); str_piece_index_l += 4 ) {
             
-            char x_l = input_info_p[str_piece_index_l +2];
-            char y_l = input_info_p[str_piece_index_l +3];
+            IndexPair indexes( input_info_p[str_piece_index_l +2], input_info_p[str_piece_index_l +3] );
             
             char str_piece_l[] = {
                 input_info_p[str_piece_index_l],
                 input_info_p[str_piece_index_l +1],
-                x_l,
-                y_l
+                input_info_p[str_piece_index_l +2],
+                input_info_p[str_piece_index_l +3]
             };
             
             pieces.push_back( Parse( str_piece_l ) );
-            tiles_table_v[x_l - 'A'][y_l - '0']->PutPiece( & pieces[pieces.size() -1] );
+            tiles_table_v[indexes.x_v][indexes.y_v]->PutPiece( & pieces[pieces.size() -1] );
             
             //TEST
-            /*Position pos( 'E', 8 );
-            if( pos == pieces[pieces.size() -1].GetPosition() ) {
-                
-                std::cout << pieces[pieces.size() -1].GetType() << std::endl;
-                std::cout << "Tile Empty? - " << tiles_table_v[x_l - 'A'][y_l - '0']->Empty() << std::endl;
-                std::cout << "Score: " << pieces[pieces.size() -1].GetScore() << std::endl;
-            }*/
+            //std::cout << tiles_table_v[x_l - 'A'][y_l - '0']->piece_p->axes[0].x_v << std::endl;
         }
         
     }
@@ -72,6 +60,33 @@ namespace BCAI {
             case 'O':       return Officer( pos_l, 3,   white_l, str_piece_p[1] );    //Bishop
             default:        return Pawn(    pos_l, 1,   white_l, str_piece_p[1] );
         }
+    }
+    
+    bool Board::AlowedMove( const char * move_p ) {
+        
+        IndexPair from( move_p[0], move_p[1] );
+        
+        std::cout << "Is Empty?: " << tiles_table_v[from.x_v][from.y_v]->Empty() << std::endl;
+        
+        if( tiles_table_v[from.x_v][from.y_v]->Empty() ) {
+            
+            std::cout << "Tile-From is Empty" << std::endl;
+        }
+        
+        IndexPair to( move_p[2], move_p[3] );
+        
+        std::cout << from.x_v << std::endl;
+        std::cout << from.y_v << std::endl;
+        std::cout << to.x_v << std::endl;
+        std::cout << to.y_v << std::endl;
+        
+        if( tiles_table_v[from.x_v][from.y_v]->piece_p->White() == tiles_table_v[to.x_v][to.y_v]->piece_p->White() ) {
+            
+            std::cout << "Not alowed to put on the same color Piece" << std::endl;
+            return false;
+        }
+        
+        return true;
     }
     
 }

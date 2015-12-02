@@ -13,14 +13,18 @@ namespace BCAI {
 
     //---------------------------
     
-    unsigned int Piece::GetScore() {
+    bool Piece::White() {
         
-        return score_v;
+        return white_v;
     }
     
     Position & Piece::GetPosition() {
         
         return position_v;
+    }
+    unsigned int Piece::GetScore() {
+        
+        return score_v;
     }
     
     char Piece::GetType() {
@@ -28,4 +32,18 @@ namespace BCAI {
         return type_v;
     }
     
+    /*bool Piece::AlowedMove() {
+        
+        //Foreach Axe direction
+        for( int i = 0; i < axes.size(); i++ ) {
+            
+            
+            while( true ) {
+                
+                std::cout << "adf";
+            }
+            
+        }
+        return false;
+    }*/
 }

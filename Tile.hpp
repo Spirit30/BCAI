@@ -18,7 +18,6 @@ namespace BCAI  {
         
     private:
         Position adress_v;
-        
     public:
         Piece * piece_p = NULL;
         Tile( Position _adress_v ) : adress_v(_adress_v) { };

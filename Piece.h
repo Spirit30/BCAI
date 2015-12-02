@@ -20,9 +20,21 @@
 #include "Position.hpp"
 
 
-//#include <iostream>
+#include <iostream>
 
 namespace BCAI {
+    
+    struct Axe {
+        
+        int x_v;
+        int y_v;
+        
+        Axe( int _x_v, int _y_v ) {
+            
+            x_v = _x_v;
+            y_v = _y_v;
+        }
+    };
     
     class Piece {
         
@@ -33,16 +45,16 @@ namespace BCAI {
         unsigned int score_v;
         char type_v;
     protected:
-        //variables
-        std::vector<Position> avaliable_positions_v;
-        //const char * GetPieceStr( const char type );
+        std::vector<Axe> axes;
     public:
         Piece( Position _position_v, unsigned int _score_v, bool _white_v, char _type_v ) : position_v(_position_v), score_v(_score_v), white_v(_white_v), type_v(_type_v) { };
-        //virtual std::vector<Position> Avaliable();
-        unsigned int GetScore();
+        //Accesors
+        bool White();
         Position & GetPosition();
+        unsigned int GetScore();
         char GetType();
-        
+        //Algorythms
+        //virtual bool AlowedMove();
     };
     
 }

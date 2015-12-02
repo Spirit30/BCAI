@@ -16,7 +16,7 @@ namespace BCAI {
     
     bool Tile::Empty() {
         
-        return ! piece_p;
+        return piece_p == NULL;
     }
     
     Position & Tile::GetAdress() {
