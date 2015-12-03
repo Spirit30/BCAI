@@ -14,4 +14,10 @@ namespace BCAI {
         
         return this->x == other.x && this->y == other.y;
     }
+    
+    std::ostream & operator<<(std::ostream & os, const Position & pos)
+    {
+        os << "( X: " << pos.x << ", " << "Y: " << pos.y << ")";
+        return os;
+    }
 }

@@ -24,6 +24,7 @@ namespace BCAI  {
         void PutPiece( Piece * _piece_p );
         bool Empty();
         Position & GetAdress();
+        ~Tile();
     };
 }
 

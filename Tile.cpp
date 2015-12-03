@@ -23,4 +23,9 @@ namespace BCAI {
         
         return adress_v;
     }
+    
+    Tile::~Tile() {
+        
+        std::cout << "~Tile Destructed" << std::endl;
+    }
 }

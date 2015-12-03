@@ -10,6 +10,8 @@
 #define Position_hpp
 
 #include <stdio.h>
+#include <iostream>
+
 namespace BCAI {
     
     struct Position {
@@ -18,6 +20,7 @@ namespace BCAI {
         const unsigned int y;
         Position( char _x, unsigned int _y ) : x(_x), y(_y) { };
         bool operator == ( Position & other ) const;
+        friend std::ostream & operator << (std::ostream & os, const Position & pos);
     };
 }
 #endif /* Position_hpp */

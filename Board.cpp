@@ -10,6 +10,21 @@
 
 namespace BCAI {
     
+    IndexPair::IndexPair( char _x_v, char _y_v ) {
+        
+        x_v = _x_v - 'A';
+        y_v = _y_v - '0' -1;    // Index begins from 0, that's why: -1
+    }
+    
+    std::ostream & operator << (std::ostream & os, const IndexPair & indexes)
+    {
+        os << "( x_i: " << indexes.x_v << ", " << "y_i: " << indexes.y_v << ")";
+        return os;
+    }
+    
+    //-------------------------
+    //-------------------------
+    
     Board::Board( const char * input_info_p)
     {
         //Create Tiles
@@ -18,8 +33,7 @@ namespace BCAI {
             for( int y_index_l = 0; y_index_l < 8; y_index_l++ ) {
             
                 Position position( 'A' + x_index_l, y_index_l +1 );
-                Tile tile( position );
-                tiles_table_v[x_index_l][y_index_l] = & tile;
+                tiles_table_v[x_index_l][y_index_l] = new Tile( position );
             }
         }
         
@@ -39,26 +53,28 @@ namespace BCAI {
             pieces.push_back( Parse( str_piece_l ) );
             tiles_table_v[indexes.x_v][indexes.y_v]->PutPiece( & pieces[pieces.size() -1] );
             
-            //TEST
-            //std::cout << tiles_table_v[x_l - 'A'][y_l - '0']->piece_p->axes[0].x_v << std::endl;
+            //Parse debug
+            std::cout << tiles_table_v[indexes.x_v][indexes.y_v]->GetAdress() <<
+            " contains Piece: " <<
+            tiles_table_v[indexes.x_v][indexes.y_v]->piece_p->GetType() << std::endl;
         }
         
     }
     
     //Pieces Factory
-    Piece Board::Parse( const char * str_piece_p ) {
+    Piece & Board::Parse( const char * str_piece_p ) {
         
         bool white_l = str_piece_p[0] == '+';
         Position pos_l( str_piece_p[2], str_piece_p[3] - '0' );
 
         switch ( str_piece_p[1] ) {
                 
-            case 'K':       return King(    pos_l, 30,  white_l, str_piece_p[1] );
-            case 'Q':       return Queen(   pos_l, 9,   white_l, str_piece_p[1] );
-            case 'R':       return Rook(    pos_l, 5,   white_l, str_piece_p[1] );
-            case 'S':       return Steed(   pos_l, 3,   white_l, str_piece_p[1] );    //Knight
-            case 'O':       return Officer( pos_l, 3,   white_l, str_piece_p[1] );    //Bishop
-            default:        return Pawn(    pos_l, 1,   white_l, str_piece_p[1] );
+            case 'K':   return * new King(    pos_l, 30,  white_l, str_piece_p[1] );
+            case 'Q':   return * new Queen(   pos_l, 9,   white_l, str_piece_p[1] );
+            case 'R':   return * new Rook(    pos_l, 5,   white_l, str_piece_p[1] );
+            case 'S':   return * new Steed(   pos_l, 3,   white_l, str_piece_p[1] );    //Knight
+            case 'O':   return * new Officer( pos_l, 3,   white_l, str_piece_p[1] );    //Bishop
+            default:    return * new Pawn(    pos_l, 1,   white_l, str_piece_p[1] );
         }
     }
     
@@ -66,7 +82,9 @@ namespace BCAI {
         
         IndexPair from( move_p[0], move_p[1] );
         
-        std::cout << "Is Empty?: " << tiles_table_v[from.x_v][from.y_v]->Empty() << std::endl;
+        std::cout << "FROM indicies: " << from << std::endl;
+        
+        //std::cout << "Is Empty?: " << tiles_table_v[from.x_v][from.y_v]->piece_p->GetPosition() << std::endl;
         
         if( tiles_table_v[from.x_v][from.y_v]->Empty() ) {
             
