@@ -42,7 +42,7 @@ namespace BCAI {
         
         //If User moves other side piece
         //-------------------
-        /*char color_l = '0';
+        char color_l = '0';
         //Foreach str-Piece: +RA1
         for( int str_piece_index_l = 0; str_piece_index_l < strlen(game_p); str_piece_index_l += 4 ) {
             
@@ -65,7 +65,7 @@ namespace BCAI {
             
             std::cout << "Not alowed to move piece of oponnent: " << move_p << std::endl;
             return false;
-        }*/
+        }
         //-------------------
     
         Board board( game_p );

@@ -357,7 +357,7 @@ bool ChooseSide() {
 
 class InputMoveEx: public exception
 {
-    virtual const char* what() const throw() {
+    virtual const char * what() const throw() {
         
         return "Invalid input. Please use chars A-H and digits 1-8.";
     }
@@ -416,6 +416,8 @@ void Print( GameState & game_state_r, const char * move_p ) {
 //-----------------------
 
 void UserMove( const BCAI::Communicator & communicator, const char * input_game_p, char * move_p, bool white_side_l ) {
+    
+    InputFill(move_p);
     
     while ( ! communicator.RulesAdvisor( input_game_p, move_p, white_side_l ) ) {
         

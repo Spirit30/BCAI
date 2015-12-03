@@ -82,25 +82,21 @@ namespace BCAI {
         
         IndexPair from( move_p[0], move_p[1] );
         
-        std::cout << "FROM indicies: " << from << std::endl;
-        
-        //std::cout << "Is Empty?: " << tiles_table_v[from.x_v][from.y_v]->piece_p->GetPosition() << std::endl;
-        
+        //Check FROM
         if( tiles_table_v[from.x_v][from.y_v]->Empty() ) {
             
-            std::cout << "Tile-From is Empty" << std::endl;
+            std::cout << "Tile-From " << from << " is Empty!" << std::endl;
+            return false;
         }
         
         IndexPair to( move_p[2], move_p[3] );
         
-        std::cout << from.x_v << std::endl;
-        std::cout << from.y_v << std::endl;
-        std::cout << to.x_v << std::endl;
-        std::cout << to.y_v << std::endl;
-        
-        if( tiles_table_v[from.x_v][from.y_v]->piece_p->White() == tiles_table_v[to.x_v][to.y_v]->piece_p->White() ) {
+        //Check TO
+        //If same color Piece stands on destination Tile
+        if( ! tiles_table_v[to.x_v][to.y_v]->Empty() &&
+            tiles_table_v[from.x_v][from.y_v]->piece_p->White() == tiles_table_v[to.x_v][to.y_v]->piece_p->White() ) {
             
-            std::cout << "Not alowed to put on the same color Piece" << std::endl;
+            std::cout << "Not alowed to put from " << from << " to " << to << ": on the same color Piece! " << std::endl;
             return false;
         }
         
