@@ -28,31 +28,17 @@
 
 
 namespace BCAI {
-
-    struct IndexPair {
-        
-        int x_v;
-        int y_v;
-        
-        IndexPair( char _x_v, char _y_v );
-        friend std::ostream & operator << (std::ostream & os, const IndexPair & indexes);
-    };
-    
-    //-------------------------
-    //-------------------------
     
     class Board
     {
-    private:
+    public:
         Tile * tiles_table_v[8][8];
         std::vector<Piece> pieces;
-    public:
         //------------------------
         Board( const char * input_info_p );
         Piece & Parse( const char str_piece_v[4] );
         bool AlowedMove( const char * move_p );
     };
-
 }
 
 #endif /* defined(__BCAI__Board__) */

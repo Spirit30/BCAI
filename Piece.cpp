@@ -34,16 +34,15 @@ namespace BCAI {
     
     /*bool Piece::AlowedMove() {
         
-        //Foreach Axe direction
-        for( int i = 0; i < axes.size(); i++ ) {
+        //Check each Axe direction
+        for( int a = 0; a < axes.size(); a++ ) {
             
+            //IndexPair temp_position( )
+            //Check each Tile on this Axe direction
             
-            while( true ) {
-                
-                std::cout << "adf";
-            }
             
         }
+        std::cout << "Decline in Piece" << std::endl;
         return false;
     }*/
 }

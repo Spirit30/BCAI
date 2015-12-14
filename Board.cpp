@@ -10,21 +10,6 @@
 
 namespace BCAI {
     
-    IndexPair::IndexPair( char _x_v, char _y_v ) {
-        
-        x_v = _x_v - 'A';
-        y_v = _y_v - '0' -1;    // Index begins from 0, that's why: -1
-    }
-    
-    std::ostream & operator << (std::ostream & os, const IndexPair & indexes)
-    {
-        os << "( x_i: " << indexes.x_v << ", " << "y_i: " << indexes.y_v << ")";
-        return os;
-    }
-    
-    //-------------------------
-    //-------------------------
-    
     Board::Board( const char * input_info_p)
     {
         //Create Tiles
@@ -93,12 +78,35 @@ namespace BCAI {
         
         //Check TO
         //If same color Piece stands on destination Tile
-        if( ! tiles_table_v[to.x_v][to.y_v]->Empty() &&
-            tiles_table_v[from.x_v][from.y_v]->piece_p->White() == tiles_table_v[to.x_v][to.y_v]->piece_p->White() ) {
+        if( ! tiles_table_v[to.x_v][to.y_v]->Empty() ) {
             
-            std::cout << "Not alowed to put from " << from << " to " << to << ": on the same color Piece! " << std::endl;
-            return false;
+            if( tiles_table_v[from.x_v][from.y_v]->piece_p->White() == tiles_table_v[to.x_v][to.y_v]->piece_p->White() ) {
+                
+                std::cout << "Not alowed to put from " << from << " to " << to << ": on the same color Piece! " << std::endl;
+                return false;
+            }
         }
+        
+        //EXCEPT STEED !!!
+        //----------------
+        std::cout << "PIECE: " << tiles_table_v[from.x_v][from.y_v]->piece_p->GetType() << std::endl;
+        //Check each Axe direction: Is it path TO
+        for( int a = 0; a < tiles_table_v[from.x_v][from.y_v]->piece_p->axes.size(); a++ ) {
+            
+            IndexPair temp( from + tiles_table_v[from.x_v][from.y_v]->piece_p->axes[a] );
+            //Check each Tile on this Axe direction
+            while( temp.OnBoard() ) {
+                
+                //Exit from cycle with result
+                if( temp == to ) {
+                    
+                    std::cout << "SUCCESS: Desired move is on the axe." << std::endl;
+                }
+                temp += tiles_table_v[from.x_v][from.y_v]->piece_p->axes[a];
+            }
+            
+        }
+        //----------------
         
         return true;
     }

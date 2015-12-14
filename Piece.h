@@ -19,22 +19,9 @@
 //-------------------
 #include "Position.hpp"
 
-
 #include <iostream>
 
 namespace BCAI {
-    
-    struct Axe {
-        
-        int x_v;
-        int y_v;
-        
-        Axe( int _x_v, int _y_v ) {
-            
-            x_v = _x_v;
-            y_v = _y_v;
-        }
-    };
     
     class Piece {
         
@@ -44,9 +31,9 @@ namespace BCAI {
         Position position_v;
         unsigned int score_v;
         char type_v;
-    protected:
-        std::vector<Axe> axes;
     public:
+        std::vector<IndexPair> axes;
+        //---------------------
         Piece( Position _position_v, unsigned int _score_v, bool _white_v, char _type_v ) : position_v(_position_v), score_v(_score_v), white_v(_white_v), type_v(_type_v) { };
         //Accesors
         bool White();

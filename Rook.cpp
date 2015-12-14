@@ -12,6 +12,10 @@ namespace BCAI {
     
     Rook::Rook( Position _position_v, unsigned int _score_v, bool _white_v, char type_v ) : Piece( _position_v, _score_v, _white_v, type_v ) {
         
-        axes.push_back( * new Axe(-1,1 ) );
+        axes.push_back( * new IndexPair(-1, 0 ) );
+        axes.push_back( * new IndexPair(+1, 0 ) );
+        axes.push_back( * new IndexPair( 0,-1 ) );
+        axes.push_back( * new IndexPair( 0,+1 ) );
+        std::cout << "ROOK: " << axes.size() << std::endl;
     }
 }
