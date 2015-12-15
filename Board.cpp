@@ -17,13 +17,14 @@ namespace BCAI {
             
             for( int y_index_l = 0; y_index_l < 8; y_index_l++ ) {
             
-                Position position( 'A' + x_index_l, y_index_l +1 );
-                tiles_table_v[x_index_l][y_index_l] = new Tile( position );
+				Position position('A' + x_index_l, y_index_l + 1);
+				tiles_table_v[x_index_l][y_index_l] = new Tile(position);
             }
         }
-        
-        
+
         //Parse Pieces data to Pieces list and to Tiles array
+		pieces = * new std::vector<Piece>( strlen(input_info_p) / 4 );
+
         for( int str_piece_index_l = 0; str_piece_index_l < strlen(input_info_p); str_piece_index_l += 4 ) {
             
             IndexPair indexes( input_info_p[str_piece_index_l +2], input_info_p[str_piece_index_l +3] );
@@ -35,13 +36,13 @@ namespace BCAI {
                 input_info_p[str_piece_index_l +3]
             };
             
-            pieces.push_back( Parse( str_piece_l ) );
-            tiles_table_v[indexes.x_v][indexes.y_v]->PutPiece( & pieces[pieces.size() -1] );
+			Piece * piece_l = & Parse(str_piece_l);
+			pieces[str_piece_index_l / 4] = * piece_l;
+            tiles_table_v[indexes.x_v][indexes.y_v]->PutPiece( piece_l );
             
-            //Parse debug
-            std::cout << tiles_table_v[indexes.x_v][indexes.y_v]->GetAdress() <<
-            " contains Piece: " <<
-            tiles_table_v[indexes.x_v][indexes.y_v]->piece_p->GetType() << std::endl;
+            //TEST
+            /*std::cout << tiles_table_v[indexes.x_v][indexes.y_v]->GetAdress() <<
+            " contains Piece: " << * tiles_table_v[indexes.x_v][indexes.y_v]->piece_p << std::endl;*/
         }
         
     }
@@ -50,16 +51,16 @@ namespace BCAI {
     Piece & Board::Parse( const char * str_piece_p ) {
         
         bool white_l = str_piece_p[0] == '+';
-        Position pos_l( str_piece_p[2], str_piece_p[3] - '0' );
+        Position * pos_p = new Position( str_piece_p[2], str_piece_p[3] - '0' );
 
         switch ( str_piece_p[1] ) {
                 
-            case 'K':   return * new King(    pos_l, 30,  white_l, str_piece_p[1] );
-            case 'Q':   return * new Queen(   pos_l, 9,   white_l, str_piece_p[1] );
-            case 'R':   return * new Rook(    pos_l, 5,   white_l, str_piece_p[1] );
-            case 'S':   return * new Steed(   pos_l, 3,   white_l, str_piece_p[1] );    //Knight
-            case 'O':   return * new Officer( pos_l, 3,   white_l, str_piece_p[1] );    //Bishop
-            default:    return * new Pawn(    pos_l, 1,   white_l, str_piece_p[1] );
+			case 'K':   return * new King(*pos_p, 30, white_l, str_piece_p[1]);
+			case 'Q':   return * new Queen(*pos_p, 9, white_l, str_piece_p[1]);
+			case 'R':   return * new Rook(*pos_p, 5, white_l, str_piece_p[1]);
+			case 'S':   return * new Steed(*pos_p, 3, white_l, str_piece_p[1]);    //Knight
+			case 'O':   return * new Officer(*pos_p, 3, white_l, str_piece_p[1]);    //Bishop
+			default:    return * new Pawn(*pos_p, 1, white_l, str_piece_p[1]);
         }
     }
     
@@ -86,10 +87,32 @@ namespace BCAI {
                 return false;
             }
         }
+
+		//TEST
+		std::cout << "LENGTH: " << pieces.size() << std::endl;
+		/*for ( int t = 0; t < pieces.size(); t++ )
+		{
+			std::cout << "Position: " << pieces[t].GetPosition() << ", " <<
+				"Type: " << pieces[t].GetType() << ", " <<
+				"Color: " << pieces[t].White() << std::endl;
+		}
+		
+		for (int x_t = 0; x_t < 8; x_t++) {
+
+			for (int y_t = 0; y_t < 8; y_t++) {
+
+				if ( ! tiles_table_v[x_t][y_t]->Empty() ) {
+
+					std::cout	<< x_t << " - " << y_t << ", " 
+								<< "TEST " << * tiles_table_v[x_t][y_t]->piece_p << std::endl;
+				}
+			}
+		}
+		*/
         
         //EXCEPT STEED !!!
         //----------------
-        std::cout << "PIECE: " << tiles_table_v[from.x_v][from.y_v]->piece_p->GetType() << std::endl;
+		
         //Check each Axe direction: Is it path TO
         for( int a = 0; a < tiles_table_v[from.x_v][from.y_v]->piece_p->axes.size(); a++ ) {
             

@@ -17,11 +17,12 @@ namespace BCAI {
     
     struct Position {
         
-        const char x;
-        const unsigned int y;
+        char x;
+        unsigned int y;
         Position( char _x, unsigned int _y ) : x(_x), y(_y) { };
+		Position & operator = (const Position & other);
         bool operator == ( Position & other ) const;
-        friend std::ostream & operator << (std::ostream & os, const Position & pos);
+        friend std::ostream & operator << (std::ostream & os, Position & pos);
     };
     
     //-------------------------

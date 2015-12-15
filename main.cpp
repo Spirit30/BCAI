@@ -5,7 +5,7 @@
 //  Created by Max Botviniev on 15.10.15.
 //  Copyright (c) 2015 Max Botviniev. All rights reserved.
 //
-//#define WIN_BCAI
+#define WIN_BCAI
 //#define MAC_BCAI
 
 #include <iostream>
@@ -116,9 +116,7 @@ void GameState::Save( char * move_p ) {
 
     cout << "BEFORE" << endl;
     cout << game_p << endl;
-    
-    //DELETE beated Piece
-    
+
     //Foreach str-Piece: +RA1
     for( int str_piece_index_l = 0; str_piece_index_l < Length(); str_piece_index_l += 4 ) {
         
@@ -126,7 +124,7 @@ void GameState::Save( char * move_p ) {
         if( ComparePredicate(move_p, str_piece_index_l) ) {
             
             size_t len_l = Length() -4;
-            char temp_game_l[ len_l ];
+            char * temp_game_l = new char[ len_l ];
             strncpy(temp_game_l, game_p, str_piece_index_l);
             temp_game_l[ str_piece_index_l ] = '\0';
             strncat(temp_game_l, game_p + str_piece_index_l + 4, len_l - str_piece_index_l);
@@ -134,6 +132,7 @@ void GameState::Save( char * move_p ) {
             delete[] game_p;
             game_p = new char [ len_l +1 ];
             strcpy( game_p, temp_game_l );
+			delete[] temp_game_l;
             
             cout << "DELETED Piece" << endl;
             cout << game_p << endl;
@@ -177,7 +176,6 @@ size_t GameState::Length() {
 
 vector<Tile> ParseDecision( vector<Tile> & parsed_decision_r, const char * decision_p, char * game_p )
 {
-
     bool decision_aplied_l = false;
     
     //bool decision_aplied_l = false;
@@ -190,7 +188,6 @@ vector<Tile> ParseDecision( vector<Tile> & parsed_decision_r, const char * decis
     
     for(int tile_index_l = 0; tile_index_l < Tile::TILES; tile_index_l++)
     {
-
         //----------
         //If new line begins
         if( tile_index_l % Tile::TILES_PER_AXE == 0) {
@@ -459,7 +456,7 @@ int main(int argc, const char * argv[]) {
             game_state_v.Save( move_p );
         }
         
-        //Print( game_state_v, communicator.GetDecision(game_state_v.Get()) );
+        //Entry point to frontend
         Print( game_state_v, move_p );
         delete[] move_p;
         

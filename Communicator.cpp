@@ -68,8 +68,8 @@ namespace BCAI {
         }
         //-------------------
     
-        Board board( game_p );
+		Board board(game_p);
         
-        return board.AlowedMove( move_p );
+		return board.AlowedMove(move_p);
     }
 }

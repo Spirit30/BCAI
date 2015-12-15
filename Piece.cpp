@@ -13,24 +13,29 @@ namespace BCAI {
 
     //---------------------------
     
-    bool Piece::White() {
+	bool Piece::White() {
         
         return white_v;
     }
     
-    Position & Piece::GetPosition() {
+	Position & Piece::GetPosition() {
         
         return position_v;
     }
-    unsigned int Piece::GetScore() {
+	unsigned int Piece::GetScore() {
         
         return score_v;
     }
     
-    char Piece::GetType() {
+	char Piece::GetType() {
         
         return type_v;
     }
+
+	size_t Piece::Axes() {
+
+		return axes.size();
+	}
     
     /*bool Piece::AlowedMove() {
         
@@ -45,4 +50,35 @@ namespace BCAI {
         std::cout << "Decline in Piece" << std::endl;
         return false;
     }*/
+
+	Piece::~Piece() {
+
+		std::cout << * this << " - is Destroyed!" << std::endl;
+	}
+
+	void Piece::operator = ( Piece & other) {
+
+		if (&other == this) {
+
+			std::cout << "WASTE COPY: " << *this << std::endl;
+		}
+		std::cout << other << " ASSIGNED TO: " << *this << std::endl;
+
+		position_v = other.position_v;
+		type_v = other.type_v;
+		white_v = other.white_v;
+		score_v = other.score_v;
+		axes = other.axes;	//!!!
+	}
+
+	std::ostream & operator << (std::ostream & out, Piece & piece) {
+
+		out << "Piece Output || " <<
+			"Position: " << piece.GetPosition() <<
+			", Type: " << piece.GetType() <<
+			", Color: " << (piece.White() ? "White" : "Black") <<
+			", Axes: " << piece.Axes();
+
+		return out;
+	}
 }
