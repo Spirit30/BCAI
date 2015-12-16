@@ -30,16 +30,22 @@ namespace BCAI {
     
     struct IndexPair {
         
-        int x_v;
-        int y_v;
+        int x_v = 66;
+        int y_v = 99;
         
+		IndexPair();
+		IndexPair(int _x_v, int _y_v);
         IndexPair( char _x_v, char _y_v );
         IndexPair( const IndexPair & other );
         IndexPair( const Position & pos );
         bool OnBoard();
         IndexPair Abs(const IndexPair & other);
+		IndexPair Normilized();
+		IndexPair Direction( IndexPair to );
         void operator += (const IndexPair & other);
         IndexPair operator + (const IndexPair & other);
+		IndexPair operator - (const IndexPair & other);
+		void operator = (IndexPair & other);
         bool operator == ( IndexPair & other ) const;
         bool operator > ( IndexPair & other ) const;
         friend std::ostream & operator << (std::ostream & os, const IndexPair & indexes);

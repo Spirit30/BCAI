@@ -17,8 +17,7 @@ namespace BCAI {
             
             for( int y_index_l = 0; y_index_l < 8; y_index_l++ ) {
             
-				Position position('A' + x_index_l, y_index_l + 1);
-				tiles_table_v[x_index_l][y_index_l] = new Tile(position);
+				tiles_table_v[x_index_l][y_index_l] = new Tile( Position('A' + x_index_l, y_index_l + 1) );
             }
         }
 
@@ -30,6 +29,7 @@ namespace BCAI {
             IndexPair indexes( input_info_p[str_piece_index_l +2], input_info_p[str_piece_index_l +3] );
             
             char str_piece_l[] = {
+
                 input_info_p[str_piece_index_l],
                 input_info_p[str_piece_index_l +1],
                 input_info_p[str_piece_index_l +2],
@@ -63,6 +63,11 @@ namespace BCAI {
 			default:    return * new Pawn(*pos_p, 1, white_l, str_piece_p[1]);
         }
     }
+
+	Piece & Board::GetPiece(IndexPair adress) {
+
+		return * tiles_table_v[adress.x_v][adress.y_v]->piece_p;
+	}
     
     bool Board::AlowedMove( const char * move_p ) {
         
@@ -81,57 +86,54 @@ namespace BCAI {
         //If same color Piece stands on destination Tile
         if( ! tiles_table_v[to.x_v][to.y_v]->Empty() ) {
             
-            if( tiles_table_v[from.x_v][from.y_v]->piece_p->White() == tiles_table_v[to.x_v][to.y_v]->piece_p->White() ) {
+			if ( GetPiece(from).White() == GetPiece(to).White() ) {
                 
                 std::cout << "Not alowed to put from " << from << " to " << to << ": on the same color Piece! " << std::endl;
                 return false;
             }
         }
-
-		//TEST
-		std::cout << "LENGTH: " << pieces.size() << std::endl;
-		/*for ( int t = 0; t < pieces.size(); t++ )
-		{
-			std::cout << "Position: " << pieces[t].GetPosition() << ", " <<
-				"Type: " << pieces[t].GetType() << ", " <<
-				"Color: " << pieces[t].White() << std::endl;
-		}
-		
-		for (int x_t = 0; x_t < 8; x_t++) {
-
-			for (int y_t = 0; y_t < 8; y_t++) {
-
-				if ( ! tiles_table_v[x_t][y_t]->Empty() ) {
-
-					std::cout	<< x_t << " - " << y_t << ", " 
-								<< "TEST " << * tiles_table_v[x_t][y_t]->piece_p << std::endl;
-				}
-			}
-		}
-		*/
         
-        //EXCEPT STEED !!!
+        /*//EXCEPT STEED !!!
         //----------------
-		
+		int desired_axe_index_l = -1;
         //Check each Axe direction: Is it path TO
-        for( int a = 0; a < tiles_table_v[from.x_v][from.y_v]->piece_p->axes.size(); a++ ) {
+		for (int a = 0; a < GetPiece(from).axes.size(); a++) {
             
-            IndexPair temp( from + tiles_table_v[from.x_v][from.y_v]->piece_p->axes[a] );
-            //Check each Tile on this Axe direction
-            while( temp.OnBoard() ) {
-                
-                //Exit from cycle with result
-                if( temp == to ) {
-                    
-                    std::cout << "SUCCESS: Desired move is on the axe." << std::endl;
-                }
-                temp += tiles_table_v[from.x_v][from.y_v]->piece_p->axes[a];
-            }
-            
+			if ( GetPiece(from).axes[a] == from.Direction(to).Normilized() ) {
+
+				std::cout << "SUCCESS: Desired move is on this axe: " << GetPiece(from).axes[a] << std::endl;
+				desired_axe_index_l = a;
+				break;
+			}
         }
+		if (desired_axe_index_l == -1) {
+
+			std::cout << "FAIL: Move do NOT belongs to any Axe of choosen Piece: " << GetPiece(from) << std::endl;
+			return false;
+		}
+
+		//Check desired Axe
+		IndexPair temp(from + GetPiece(from).axes[ desired_axe_index_l ]);
+		//Check each Tile on this Axe direction
+		while (temp.OnBoard()) {
+
+			//Exit from cycle with result
+			if (temp == to) {
+
+				std::cout << "SUCCESS: No other pieces on the Axe." << std::endl;
+				break;
+			}
+			else if ( ! tiles_table_v[temp.x_v][temp.y_v]->Empty() ) {
+
+				std::cout << "FAIL: Other piece ( " << GetPiece(temp) << " ) on the axe." << std::endl;
+				return false;
+			}
+			temp += GetPiece(from).axes[ desired_axe_index_l ];
+		}*/
+
         //----------------
-        
-        return true;
+        //Ask Piece
+		return GetPiece(from).AlowedMove();
     }
     
 }

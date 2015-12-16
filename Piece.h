@@ -34,21 +34,10 @@ namespace BCAI {
     public:
         std::vector<IndexPair> axes;
         //---------------------
-		//Constructors
-		Piece() : position_v(Position('Z', 666)), score_v(777), white_v(6), type_v('E') {};
-
-        Piece( Position _position_v, unsigned int _score_v, bool _white_v, char _type_v ) : 
-			position_v(_position_v), score_v(_score_v), white_v(_white_v), type_v(_type_v) {
-		
-			std::cout << * this << " Created." << std::endl;
-		};
-		Piece(const Piece & _copy) :
-			position_v(_copy.position_v), score_v(_copy.score_v), white_v(_copy.white_v), type_v(_copy.type_v) {
-
-			axes = _copy.axes; //!!!
-
-			std::cout << * this << " Copy constructed!" << std::endl;
-		};
+		//Constructors / Destructors
+		Piece();
+		Piece(Position _position_v, unsigned int _score_v, bool _white_v, char _type_v);
+		Piece(const Piece & _copy);
 		~Piece();
         //Accesors
         bool White();
@@ -57,7 +46,7 @@ namespace BCAI {
 		char GetType();
 		size_t Axes();
         //Algorythms
-        //virtual bool AlowedMove();
+        virtual bool AlowedMove();
 		void operator = ( Piece & other);
 		friend std::ostream & operator << (std::ostream & out, Piece & piece);
     }; 

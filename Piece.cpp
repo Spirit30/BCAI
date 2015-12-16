@@ -10,6 +10,19 @@
 
 namespace BCAI {
     
+	Piece::Piece() : position_v(Position('Z', 666)), score_v(777), white_v(6), type_v('E') {};
+	Piece::Piece(Position _position_v, unsigned int _score_v, bool _white_v, char _type_v) :
+		position_v(_position_v), score_v(_score_v), white_v(_white_v), type_v(_type_v) {
+
+		//std::cout << * this << " Created." << std::endl;
+	};
+	Piece::Piece(const Piece & _copy) :
+		position_v(_copy.position_v), score_v(_copy.score_v), white_v(_copy.white_v), type_v(_copy.type_v) {
+
+		axes = _copy.axes; //!!!
+
+		//std::cout << *this << " Copy constructed!" << std::endl;
+	};
 
     //---------------------------
     
@@ -37,38 +50,30 @@ namespace BCAI {
 		return axes.size();
 	}
     
-    /*bool Piece::AlowedMove() {
+    bool Piece::AlowedMove() {
         
-        //Check each Axe direction
-        for( int a = 0; a < axes.size(); a++ ) {
-            
-            //IndexPair temp_position( )
-            //Check each Tile on this Axe direction
-            
-            
-        }
-        std::cout << "Decline in Piece" << std::endl;
-        return false;
-    }*/
+		std::cout << "Permited by Base Piece" << std::endl;
+        return true;
+    }
 
 	Piece::~Piece() {
 
-		std::cout << * this << " - is Destroyed!" << std::endl;
+		//std::cout << * this << " - is Destroyed!" << std::endl;
 	}
 
 	void Piece::operator = ( Piece & other) {
 
-		if (&other == this) {
+		if ( & other == this ) {
 
-			std::cout << "WASTE COPY: " << *this << std::endl;
+			std::cout << "WASTE COPY: " << * this << std::endl;
 		}
-		std::cout << other << " ASSIGNED TO: " << *this << std::endl;
+		//std::cout << other << " ASSIGNED TO: " << * this << std::endl;
 
 		position_v = other.position_v;
 		type_v = other.type_v;
 		white_v = other.white_v;
 		score_v = other.score_v;
-		axes = other.axes;	//!!!
+		axes = other.axes;
 	}
 
 	std::ostream & operator << (std::ostream & out, Piece & piece) {

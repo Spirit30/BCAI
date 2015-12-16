@@ -16,6 +16,7 @@ namespace BCAI {
     {
     public:
         Rook( Position _position_v, unsigned int _score_v, bool _white_v, char type_v );
+		virtual bool AlowedMove() override;
     };
 }
 #endif /* defined(__BCAI__Rook__) */
