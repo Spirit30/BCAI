@@ -19,46 +19,4 @@ namespace BCAI {
         axes[3] = IndexPair( 0, 1 );
 
     }
-
-	bool Rook::AlowedMove() {
-
-		/*//----------------
-		int desired_axe_index_l = -1;
-		//Check each Axe direction: Is it path TO
-		for (int a = 0; a < GetPiece(from).axes.size(); a++) {
-
-		if ( GetPiece(from).axes[a] == from.Direction(to).Normilized() ) {
-
-		std::cout << "SUCCESS: Desired move is on this axe: " << GetPiece(from).axes[a] << std::endl;
-		desired_axe_index_l = a;
-		break;
-		}
-		}
-		if (desired_axe_index_l == -1) {
-
-		std::cout << "FAIL: Move do NOT belongs to any Axe of choosen Piece: " << GetPiece(from) << std::endl;
-		return false;
-		}
-
-		//Check desired Axe
-		IndexPair temp(from + GetPiece(from).axes[ desired_axe_index_l ]);
-		//Check each Tile on this Axe direction
-		while (temp.OnBoard()) {
-
-		//Exit from cycle with result
-		if (temp == to) {
-
-		std::cout << "SUCCESS: No other pieces on the Axe." << std::endl;
-		break;
-		}
-		else if ( ! tiles_table_v[temp.x_v][temp.y_v]->Empty() ) {
-
-		std::cout << "FAIL: Other piece ( " << GetPiece(temp) << " ) on the axe." << std::endl;
-		return false;
-		}
-		temp += GetPiece(from).axes[ desired_axe_index_l ];
-		}*/
-
-		return true;
-	}
 }

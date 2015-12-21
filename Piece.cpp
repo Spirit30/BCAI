@@ -50,11 +50,11 @@ namespace BCAI {
 		return axes.size();
 	}
     
-    bool Piece::AlowedMove() {
+	/*bool Piece::AlowedMove(const Board & board_r, const IndexPair & from, const IndexPair & to) {
         
 		std::cout << "Permited by Base Piece" << std::endl;
         return true;
-    }
+    }*/
 
 	Piece::~Piece() {
 

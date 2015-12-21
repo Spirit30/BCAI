@@ -69,7 +69,7 @@ namespace BCAI {
 		return * tiles_table_v[adress.x_v][adress.y_v]->piece_p;
 	}
     
-    bool Board::AlowedMove( const char * move_p ) {
+    bool Board::AllowedMove( const char * move_p ) {
         
         IndexPair from( move_p[0], move_p[1] );
         
@@ -82,6 +82,13 @@ namespace BCAI {
         
         IndexPair to( move_p[2], move_p[3] );
         
+		//Check is move performed
+		if (from == to) {
+
+			std::cout << "Move didn't performed!" << std::endl;
+			return false;
+		}
+
         //Check TO
         //If same color Piece stands on destination Tile
         if( ! tiles_table_v[to.x_v][to.y_v]->Empty() ) {
@@ -92,48 +99,138 @@ namespace BCAI {
                 return false;
             }
         }
-        
-        /*//EXCEPT STEED !!!
+
+		//ASK Piece
         //----------------
-		int desired_axe_index_l = -1;
-        //Check each Axe direction: Is it path TO
+		switch (GetPiece(from).GetType())
+		{
+			case 'P': return AllowedMovePawn(from, to);
+			case 'K': return AllowedMoveKing(from, to);
+			//...
+			
+			//R, O, Q
+			default: return AllowedMoveAxe(from, to);
+		}
+    }
+
+	int Board::DesiredAxe(IndexPair & from, IndexPair & to) {
+
+		//Check each Axe direction: Is it path TO
 		for (int a = 0; a < GetPiece(from).axes.size(); a++) {
-            
-			if ( GetPiece(from).axes[a] == from.Direction(to).Normilized() ) {
+
+			if (GetPiece(from).axes[a] == from.Direction(to).Normilized()) {
 
 				std::cout << "SUCCESS: Desired move is on this axe: " << GetPiece(from).axes[a] << std::endl;
-				desired_axe_index_l = a;
-				break;
+				return a;
 			}
-        }
-		if (desired_axe_index_l == -1) {
+			std::cout << "Checked axe: " << GetPiece(from).axes[a] << std::endl;
+		}
+		std::cout << "FAIL: Move do NOT belongs to any Axe of choosen Piece: " << GetPiece(from) << std::endl;
+		std::cout << "Move from: " << from << " to: " << to << std::endl;
 
-			std::cout << "FAIL: Move do NOT belongs to any Axe of choosen Piece: " << GetPiece(from) << std::endl;
+		return -1;
+	}
+
+	bool Board::AllowedMoveAxe(IndexPair & from, IndexPair & to) {
+
+		int desired_axe_index_l = DesiredAxe( from, to );
+
+		if ( desired_axe_index_l == -1) {
+
 			return false;
 		}
 
-		//Check desired Axe
-		IndexPair temp(from + GetPiece(from).axes[ desired_axe_index_l ]);
+		//Create next adress after position on this axe
+		IndexPair step(from + GetPiece(from).axes[desired_axe_index_l]);
 		//Check each Tile on this Axe direction
-		while (temp.OnBoard()) {
+		while (step.OnBoard()) {
 
-			//Exit from cycle with result
-			if (temp == to) {
+			//Exit if decline
+			if (step == to) {
 
 				std::cout << "SUCCESS: No other pieces on the Axe." << std::endl;
 				break;
 			}
-			else if ( ! tiles_table_v[temp.x_v][temp.y_v]->Empty() ) {
+			else if (!tiles_table_v[step.x_v][step.y_v]->Empty()) {
 
-				std::cout << "FAIL: Other piece ( " << GetPiece(temp) << " ) on the axe." << std::endl;
+				std::cout << "FAIL: Other piece ( " << GetPiece(step) << " ) on the axe." << std::endl;
 				return false;
 			}
-			temp += GetPiece(from).axes[ desired_axe_index_l ];
-		}*/
+			
+			step += GetPiece(from).axes[desired_axe_index_l];
+		}
 
-        //----------------
-        //Ask Piece
-		return GetPiece(from).AlowedMove();
-    }
+		//----------------
+		return true;
+	}
+
+	bool Board::AllowedMoveKing(IndexPair & from, IndexPair & to) {
+
+		int desired_axe_index_l = DesiredAxe(from, to);
+
+		if (desired_axe_index_l == -1) {
+
+			return false;
+		}
+
+		//Create next adress after position on this axe
+		IndexPair step(from + GetPiece(from).axes[desired_axe_index_l]);
+
+		return step == to;
+	}
     
+	bool Board::AllowedMovePawn(IndexPair & from, IndexPair & to) {
+
+		int desired_axe_index_l = DesiredAxe(from, to);
+
+		if (desired_axe_index_l == -1) {
+
+			return false;
+		}
+
+		//Create next adress after position on this axe
+		IndexPair step(from + GetPiece(from).axes[desired_axe_index_l]);
+		//Check Bounds
+		if (!step.OnBoard()) {
+
+			std::cout << "End of Board is achieved: " << GetPiece(from) << std::endl;
+			return false;
+		}
+		//FRONT
+		if (desired_axe_index_l == 1 ) {
+
+			bool first_move_l = from.y_v == ( GetPiece(from).White() ? 1 : 6 );
+			unsigned int max_step_length_l = first_move_l ? 2 : 1;
+			
+			if (std::abs(to.y_v - from.y_v) > max_step_length_l) {
+
+				std::cout << "Step length allowed: " << max_step_length_l << std::endl;
+				return false;	
+			}
+			else if (!tiles_table_v[step.x_v][step.y_v]->Empty()) {
+
+				std::cout << "Other piece in front: " << GetPiece(step) << std::endl;
+				return false;
+			}
+			else if (	first_move_l && 
+				!tiles_table_v[step.x_v + GetPiece(from).axes[desired_axe_index_l].x_v][step.y_v + GetPiece(from).axes[desired_axe_index_l].y_v]->Empty()) {
+
+				std::cout << "Other piece in front: " << GetPiece(step) << std::endl;
+				return false;
+			}
+		}
+		//ON ANGLE
+		else /*if (desired_axe_index_l == 0 || desired_axe_index_l == 2)*/ {
+
+			if (tiles_table_v[step.x_v][step.y_v]->Empty() ||
+				GetPiece(from).White() == GetPiece(step).White()) {
+
+				std::cout << "Not allowed beat ON ANGLE - " << GetPiece(from) << std::endl;
+				return false;
+			}
+		}
+
+		//----------------
+		return true;
+	}
 }

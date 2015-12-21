@@ -38,7 +38,13 @@ namespace BCAI {
         Board( const char * input_info_p );
         Piece & Parse( const char str_piece_v[4] );
 		Piece & GetPiece( IndexPair adress );
-        bool AlowedMove( const char * move_p );
+		int DesiredAxe( IndexPair & from, IndexPair & to );
+        bool AllowedMove( const char * move_p );
+		
+		//bool AllowedOneStep(IndexPair & step, IndexPair & to);
+		bool AllowedMoveAxe(IndexPair & from, IndexPair & to);
+		bool AllowedMovePawn(IndexPair & from, IndexPair & to);
+		bool AllowedMoveKing(IndexPair & from, IndexPair & to);
     };
 }
 

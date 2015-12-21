@@ -23,6 +23,9 @@
 
 namespace BCAI {
     
+	//ReDeclaration !!!
+	//class Board;
+
     class Piece {
         
     private:
@@ -46,7 +49,7 @@ namespace BCAI {
 		char GetType();
 		size_t Axes();
         //Algorythms
-        virtual bool AlowedMove();
+        //virtual bool AlowedMove( const Board & board_r, const IndexPair & from, const IndexPair & to );
 		void operator = ( Piece & other);
 		friend std::ostream & operator << (std::ostream & out, Piece & piece);
     }; 
