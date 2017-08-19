@@ -117,8 +117,11 @@ namespace BCAI {
 
 		//Check each Axe direction: Is it path TO
 		for (int a = 0; a < GetPiece(from).axes.size(); a++) {
+            
+            IndexPair A = GetPiece(from).axes[a];
+            IndexPair B = from.Direction(to).Normilized();
 
-			if (GetPiece(from).axes[a] == from.Direction(to).Normilized()) {
+			if (A == B) {
 
 				std::cout << "SUCCESS: Desired move is on this axe: " << GetPiece(from).axes[a] << std::endl;
 				return a;

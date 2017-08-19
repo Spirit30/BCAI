@@ -14,15 +14,15 @@ namespace BCAI {
 	
 		axes = *new std::vector<IndexPair>(8);
 		//ROOK
-		axes[0] = IndexPair(-1, 0);
-		axes[1] = IndexPair(1, 0);
-		axes[2] = IndexPair(0, -1);
-		axes[3] = IndexPair(0, 1);
+		axes[0] = *new IndexPair(-1, 0);
+		axes[1] = *new IndexPair(1, 0);
+		axes[2] = *new IndexPair(0, -1);
+		axes[3] = *new IndexPair(0, 1);
 		//OFFICER
-		axes[4] = IndexPair(-1, -1);
-		axes[5] = IndexPair(-1, 1);
-		axes[6] = IndexPair(1, 1);
-		axes[7] = IndexPair(1, -1);
+		axes[4] = *new IndexPair(-1, -1);
+		axes[5] = *new IndexPair(-1, 1);
+		axes[6] = *new IndexPair(1, 1);
+		axes[7] = *new IndexPair(1, -1);
 	}
 
 }

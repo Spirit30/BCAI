@@ -14,9 +14,9 @@ namespace BCAI {
 		: Piece(_position_v, _score_v, _white_v, type_v) {
 	
 		axes = *new std::vector<IndexPair>(4);
-		axes[0] = IndexPair(-1, -1);
-		axes[1] = IndexPair(-1, 1);
-		axes[2] = IndexPair(1, 1);
-		axes[3] = IndexPair(1, -1);
+		axes[0] = *new IndexPair(-1, -1);
+		axes[1] = *new IndexPair(-1, 1);
+		axes[2] = *new IndexPair(1, 1);
+		axes[3] = *new IndexPair(1, -1);
 	}
 }
